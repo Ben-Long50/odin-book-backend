@@ -8,35 +8,63 @@ datasource db {
 }
 
 model Post {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  mediaUrl  String?
+  body      String?
+  published Boolean   @default(false)
+  author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
+  comments  Comment[]
+  likes     Like[]
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  body      String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  likes     Like[]
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+  Post      Post?    @relation(fields: [postId], references: [id])
+  postId    Int?
+  Comment   Comment? @relation(fields: [commentId], references: [id])
+  commentId Int?
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
-  role    Role     @default(USER)
+  id         Int       @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  facebookId String?   @unique
+  email      String    @unique
+  password   String?
+  posts      Post[]
+  profile    Profile?
+  comments   Comment[]
+  friends    User[]    @relation("UserFriends")
+  friendOf   User[]    @relation("UserFriends")
+  likes      Like[]
 }
 
-enum Role {
-  USER
-  ADMIN
+model Profile {
+  id            Int       @id @default(autoincrement())
+  username      String?
+  species       String?
+  bio           String?
+  profilePicUrl String?
+  birthday      DateTime?
+  user          User      @relation(fields: [userId], references: [id])
+  userId        Int       @unique
 }
 
 //run "npx prisma generate" after updating models

@@ -10,10 +10,21 @@ const userServices = {
     }
   },
 
-  getUserById: async (id) => {
+  getUserByEmail: async (email) => {
     try {
       const user = await prisma.user.findUnique({
-        where: { id: Number(id) },
+        where: { email },
+      });
+      return user;
+    } catch (error) {
+      throw new Error('Failed to fetch user');
+    }
+  },
+
+  getUserById: async (userId) => {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id: Number(userId) },
       });
       return user;
     } catch (error) {
@@ -24,7 +35,13 @@ const userServices = {
   createUser: async (userData) => {
     try {
       const newUser = await prisma.user.create({
-        data: userData,
+        data: {
+          facebookId: userData.facebookId,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          email: userData.email,
+          password: userData.password,
+        },
       });
       return newUser;
     } catch (error) {

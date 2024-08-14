@@ -1,14 +1,13 @@
 import express from 'express';
 import cors from 'cors';
-import userController from '../controllers/userController';
-import authMiddleware from '../middleware/authMiddleware';
+import userController from '../controllers/userController.js';
 
 const router = express.Router();
 
-router.get('/users', cors(), authMiddleware, userController.getUsers);
+router.post('/users/signup', cors(), userController.createUser);
 
-router.post('/users', cors(), authMiddleware, userController.createUser);
+router.post('/users/signin', cors(), userController.authenticateUser);
 
-router.get('/users/:userId', cors(), userController.getUser);
+router.get('/users/:userId', cors(), userController.getUserById);
 
 export default router;
