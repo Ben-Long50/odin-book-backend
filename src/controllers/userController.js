@@ -38,8 +38,12 @@ const userController = {
       .escape()
       .custom(async (value) => {
         const user = await userServices.getUserByEmail(value);
-        if (user) {
-          throw new Error('This email is already in use');
+        if (user && user.facebookId) {
+          throw new Error(
+            'An account with this email already exists using the Facebook sign in option',
+          );
+        } else if (user) {
+          throw new Error('An account with this email already exists');
         }
         return true;
       }),
@@ -85,8 +89,16 @@ const userController = {
       .escape()
       .custom(async (value) => {
         const user = await userServices.getUserByEmail(value);
-        if (!user) {
-          throw new Error('Username does not exist');
+        if (user && user.googleId) {
+          throw new Error(
+            'An account with this email already exists using the Google sign in option',
+          );
+        } else if (user && user.facebookId) {
+          throw new Error(
+            'An account with this email already exists using the Facebook sign in option',
+          );
+        } else if (!user) {
+          throw new Error('An account using this email does not exist');
         }
         return true;
       }),
@@ -95,7 +107,7 @@ const userController = {
       .escape()
       .custom(async (value, { req }) => {
         const user = await userServices.getUserByEmail(req.body.email);
-        if (!user) {
+        if (!user || user.facebookId) {
           return false;
         }
         const match = await bcrypt.compare(value, user.password);
@@ -104,33 +116,12 @@ const userController = {
         }
         return true;
       }),
-
-    async (req, res) => {
+    (req, res, next) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         res.status(400).json(errors.array());
-      }
-
-      try {
-        const user = await userServices.getUserByEmail(req.body.email);
-        jwt.sign(
-          { user },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: '4h',
-          },
-          (err, token) => {
-            if (err) {
-              res.status(500).json({ message: 'Error generating token' });
-            }
-            res.status(200).json({
-              token,
-              user,
-            });
-          },
-        );
-      } catch (error) {
-        res.status(500).json({ error: error.message });
+      } else {
+        next();
       }
     },
   ],

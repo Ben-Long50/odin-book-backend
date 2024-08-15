@@ -11,7 +11,7 @@ import session from 'express-session';
 import passport from 'passport';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
-import './middleware/facebookAuth.js';
+import './passport/passport.js';
 
 const app = express();
 
@@ -34,7 +34,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(helmet());
+app.use(helmet());
 
 const limiter = rateLimit({
   windowMs: 2 * 60 * 1000,

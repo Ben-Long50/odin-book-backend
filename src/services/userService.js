@@ -36,6 +36,7 @@ const userServices = {
     try {
       const newUser = await prisma.user.create({
         data: {
+          googleId: userData.googleId,
           facebookId: userData.facebookId,
           firstName: userData.firstName,
           lastName: userData.lastName,
