@@ -9,11 +9,9 @@ router.post(
   '/signin',
   cors(),
   userController.authenticateUser,
-  passport.authenticate('local', {
-    failureRedirect: '/auth/failure',
-  }),
+  passport.authenticate('local'),
   (req, res) => {
-    res.redirect(`${process.env.CLIENT_URL}/home`);
+    res.json({ msg: 'Sign in successful' });
   },
 );
 

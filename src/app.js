@@ -1,7 +1,6 @@
 import createError from 'http-errors';
 import express from 'express';
 import path from 'path';
-import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -9,21 +8,36 @@ import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
 import session from 'express-session';
 import passport from 'passport';
+import connectPgSimple from 'connect-pg-simple';
+import pkg from 'pg';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import './passport/passport.js';
 
 const app = express();
 
-app.use(
-  session({
-    secret: process.env.SECRET_KEY,
-    resave: false,
-    saveUninitialized: true,
+const { Pool } = pkg;
+const pgPool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+const PgSession = connectPgSimple(session);
+const sess = {
+  secret: process.env.SECRET_KEY,
+  resave: false,
+  saveUninitialized: false,
+  store: new PgSession({
+    pool: pgPool,
+    tableName: 'session',
   }),
-);
+  cookie: { maxAge: 4 * 60 * 60 * 1000 },
+};
 
-app.use(passport.initialize());
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1);
+  sess.cookie.secure = true;
+}
+
+app.use(session(sess));
 app.use(passport.session());
 
 const __filename = fileURLToPath(import.meta.url);
@@ -32,7 +46,6 @@ const __dirname = path.dirname(__filename);
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 
