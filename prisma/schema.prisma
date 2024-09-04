@@ -52,9 +52,13 @@ model User {
   posts      Post[]
   profile    Profile?
   comments   Comment[]
-  friends    User[]    @relation("UserFriends")
-  friendOf   User[]    @relation("UserFriends")
+  following  User[]    @relation("UserFollowing", references: [id])
+  followers  User[]    @relation("UserFollowers", references: [id])
   likes      Like[]
+  User       User?     @relation(fields: [userId], references: [id])
+  userId     Int?
+  User       User?     @relation(fields: [userId], references: [id])
+  userId     Int?
 }
 
 model Profile {
