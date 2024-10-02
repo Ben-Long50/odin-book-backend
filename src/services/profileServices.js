@@ -5,6 +5,9 @@ const profileServices = {
     try {
       const profiles = await prisma.profile.findMany({
         where: { id: userId },
+        orderBy: {
+          username: 'asc',
+        },
       });
       return profiles;
     } catch (error) {
@@ -12,68 +15,43 @@ const profileServices = {
     }
   },
 
-  createProfile: async (profileData, userId) => {
+  createOrUpdateProfile: async (profileData, userId) => {
     try {
       const { id, username, petName, bio, species, breed } = profileData;
 
-      const profile = await prisma.profile.upsert({
-        create: {
-          username,
-          petName,
-          bio,
-          species,
-          breed,
-          active: false,
-          userId,
-        },
-        update: {
-          username,
-          petName,
-          bio,
-          species,
-          breed,
-          active: false,
-          userId,
-        },
-        where: { id },
+      if (id !== null) {
+        return await prisma.profile.update({
+          where: { id },
+          data: { username, petName, bio, species, breed },
+        });
+      }
+      return await prisma.profile.create({
+        data: { username, petName, bio, species, breed, active: false, userId },
       });
-      return profile;
     } catch (error) {
+      console.error(error);
       throw new Error('Failed to update or create a profile');
     }
   },
 
   updateActiveProfile: async (userId, profileId) => {
     try {
-      const oldActiveProfile = await prisma.profile.update({
-        where: { userId: Number(userId), active: true },
-        data: { active: false },
+      const currentActiveProfile = await prisma.profile.findFirst({
+        where: { userId, active: true },
       });
-      const newActiveProfile = await prisma.profile.update({
+      if (currentActiveProfile) {
+        await prisma.profile.update({
+          where: { id: currentActiveProfile.id },
+          data: { active: false },
+        });
+      }
+      return await prisma.profile.update({
         where: { id: profileId },
         data: { active: true },
       });
-      return newActiveProfile;
     } catch (error) {
-      throw new Error('Failed to fetch profile');
-    }
-  },
-
-  createUser: async (userData) => {
-    try {
-      const newUser = await prisma.user.create({
-        data: {
-          googleId: userData.googleId,
-          facebookId: userData.facebookId,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-          password: userData.password,
-        },
-      });
-      return newUser;
-    } catch (error) {
-      throw new Error('Failed to create user');
+      console.error(error);
+      throw new Error('Failed to update active profile');
     }
   },
 };

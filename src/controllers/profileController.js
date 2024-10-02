@@ -14,24 +14,31 @@ const profileController = {
     }
   },
 
-  createProfile: async (req, res) => {
+  createOrUpdateProfile: async (req, res) => {
     try {
-      const profile = await profileServices.createProfile(
+      const profile = await profileServices.createOrUpdateProfile(
         req.body,
         req.user.id,
       );
-      res.json(profile);
+      if (profile && req.body.id) {
+        res.status(200).json({ message: 'Successfully updated profile' });
+      } else {
+        res.status(200).json({ message: 'Successfully created profile' });
+      }
     } catch (error) {
-      res.status(500).json({ message: 'Failed to create profile' });
+      res.status(500).json({ message: error.message });
     }
   },
 
-  setProfileActive: async (req, res) => {
+  setActiveProfile: async (req, res) => {
     try {
-      const activeProfile = await profileServices.getActiveProfile();
-      res.json(activeProfile);
+      const activeProfile = profileServices.updateActiveProfile(
+        req.user.id,
+        req.body.id,
+      );
+      res.status(200).json({ activeProfile });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ message: error.message });
     }
   },
 

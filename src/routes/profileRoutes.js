@@ -12,7 +12,7 @@ router.post(
     credentials: true,
   }),
   verifyAuthentication,
-  profileController.createProfile,
+  profileController.createOrUpdateProfile,
 );
 
 router.get(
@@ -25,4 +25,13 @@ router.get(
   profileController.getProfiles,
 );
 
+router.put(
+  '/profile',
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+  verifyAuthentication,
+  profileController.setActiveProfile,
+);
 export default router;
