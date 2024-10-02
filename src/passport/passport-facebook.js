@@ -1,5 +1,5 @@
 import { Strategy as FacebookStrategy } from 'passport-facebook';
-import userServices from '../services/userService.js';
+import userServices from '../services/userServices.js';
 import prisma from '../config/database.js';
 
 const facebookStrategy = (passport) => {

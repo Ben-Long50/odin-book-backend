@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
-import userServices from '../services/userService.js';
+import userServices from '../services/userServices.js';
 
 const userController = {
   getUsers: async (req, res) => {

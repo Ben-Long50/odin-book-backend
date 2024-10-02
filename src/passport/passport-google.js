@@ -1,5 +1,5 @@
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import userServices from '../services/userService.js';
+import userServices from '../services/userServices.js';
 import prisma from '../config/database.js';
 
 const googleStrategy = (passport) => {

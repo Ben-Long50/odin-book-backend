@@ -1,5 +1,5 @@
 import passport from 'passport';
-import userServices from '../services/userService.js';
+import userServices from '../services/userServices.js';
 import googleStrategy from './passport-google.js';
 import facebookStrategy from './passport-facebook.js';
 import localStrategy from './passport-local.js';
@@ -20,5 +20,12 @@ passport.deserializeUser(async (id, done) => {
 localStrategy(passport);
 googleStrategy(passport);
 facebookStrategy(passport);
+
+export function verifyAuthentication(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.json({ msg: 'Authentication missing or expired' });
+}
 
 export default passport;

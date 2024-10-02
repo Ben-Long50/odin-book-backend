@@ -12,6 +12,7 @@ import connectPgSimple from 'connect-pg-simple';
 import pkg from 'pg';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
+import profileRouter from './routes/profileRoutes.js';
 import './passport/passport.js';
 
 const app = express();
@@ -64,6 +65,7 @@ app.use(
 
 app.use('/', userRouter);
 app.use('/', authRouter);
+app.use('/', profileRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -7,40 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  mediaUrl  String?
-  body      String?
-  published Boolean   @default(false)
-  author    User      @relation(fields: [authorId], references: [id])
-  authorId  Int
-  comments  Comment[]
-  likes     Like[]
-}
-
-model Comment {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  body      String
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  post      Post     @relation(fields: [postId], references: [id])
-  postId    Int
-  likes     Like[]
-}
-
-model Like {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
-  Post      Post?    @relation(fields: [postId], references: [id])
-  postId    Int?
-  Comment   Comment? @relation(fields: [commentId], references: [id])
-  commentId Int?
-}
-
 model User {
   id         Int       @id @default(autoincrement())
   firstName  String
@@ -49,27 +15,80 @@ model User {
   facebookId String?   @unique
   email      String    @unique
   password   String?
-  posts      Post[]
-  profile    Profile?
-  comments   Comment[]
-  following  User[]    @relation("UserFollowing", references: [id])
-  followers  User[]    @relation("UserFollowers", references: [id])
-  likes      Like[]
-  User       User?     @relation(fields: [userId], references: [id])
-  userId     Int?
-  User       User?     @relation(fields: [userId], references: [id])
-  userId     Int?
+  profiles   Profile[]
 }
 
 model Profile {
-  id            Int       @id @default(autoincrement())
-  username      String?
+  id            Int           @id @default(autoincrement())
+  username      String        @unique
+  petName       String
   species       String?
+  breed         String?
   bio           String?
   profilePicUrl String?
   birthday      DateTime?
-  user          User      @relation(fields: [userId], references: [id])
-  userId        Int       @unique
+  active        Boolean
+  user          User          @relation(fields: [userId], references: [id])
+  userId        Int
+  posts         Post[]
+  comments      Comment[]
+  postLikes     PostLike[]
+  commentLikes  CommentLike[]
+  followers     Follow[]      @relation("followerRelation") // Profiles that follow this profile
+  following     Follow[]      @relation("followingRelation") // Profiles this profile is following
+}
+
+model Follow {
+  profileId  Int
+  followerId Int
+  follower   Profile @relation("followerRelation", fields: [profileId], references: [id])
+  following  Profile @relation("followingRelation", fields: [followerId], references: [id])
+
+  @@id(name: "followId", [profileId, followerId]) // Use composite primary key
+  @@unique([profileId, followerId]) // Ensures that a profile cannot follow the same profile more than once
+}
+
+model Post {
+  id        Int        @id @default(autoincrement())
+  createdAt DateTime   @default(now())
+  mediaUrl  String?
+  body      String?
+  published Boolean    @default(false)
+  comments  Comment[]
+  likes     PostLike[]
+  profile   Profile?   @relation(fields: [profileId], references: [id])
+  profileId Int?
+}
+
+model Comment {
+  id        Int           @id @default(autoincrement())
+  createdAt DateTime      @default(now())
+  body      String
+  post      Post          @relation(fields: [postId], references: [id])
+  postId    Int
+  likes     CommentLike[]
+  profile   Profile?      @relation(fields: [profileId], references: [id])
+  profileId Int?
+}
+
+model PostLike {
+  createdAt DateTime @default(now())
+  Post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId Int
+
+  @@id(name: "PostLikeId", [postId, profileId])
+}
+
+model CommentLike {
+  createdAt DateTime @default(now())
+  Comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId Int
+  profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId Int
+
+  @@id(name: "CommentLikeId", [commentId, profileId])
 }
 
 //run "npx prisma generate" after updating models
