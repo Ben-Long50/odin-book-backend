@@ -17,16 +17,33 @@ const profileServices = {
 
   createOrUpdateProfile: async (profileData, userId) => {
     try {
-      const { id, username, petName, bio, species, breed } = profileData;
+      const { id, imageURL, username, petName, bio, species, breed } =
+        profileData;
 
       if (id !== null) {
         return await prisma.profile.update({
-          where: { id },
-          data: { username, petName, bio, species, breed },
+          where: { id: Number(id) },
+          data: {
+            profilePicUrl: imageURL,
+            username,
+            petName,
+            bio,
+            species,
+            breed,
+          },
         });
       }
       return await prisma.profile.create({
-        data: { username, petName, bio, species, breed, active: false, userId },
+        data: {
+          username,
+          profilePicUrl: imageURL,
+          petName,
+          bio,
+          species,
+          breed,
+          active: false,
+          userId,
+        },
       });
     } catch (error) {
       console.error(error);

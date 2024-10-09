@@ -1,5 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import profileServices from '../services/profileServices.js';
+import upload from '../utils/multer.js';
+import { uploadToCloudinary } from '../utils/cloudinary.js';
 
 const profileController = {
   getProfiles: async (req, res) => {
@@ -15,6 +17,8 @@ const profileController = {
   },
 
   createOrUpdateProfile: [
+    upload.single('image'),
+    uploadToCloudinary,
     body('username', 'Username must be a minimum of 2 characters')
       .trim()
       .isLength({ min: 2 })
@@ -25,10 +29,13 @@ const profileController = {
       .escape(),
     async (req, res) => {
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         res.status(400).json(errors.array());
       } else {
         try {
+          console.log(req.body);
+
           const profile = await profileServices.createOrUpdateProfile(
             req.body,
             req.user.id,
