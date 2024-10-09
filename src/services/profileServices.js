@@ -4,7 +4,7 @@ const profileServices = {
   getProfiles: async (userId) => {
     try {
       const profiles = await prisma.profile.findMany({
-        where: { id: userId },
+        where: { userId },
         orderBy: {
           username: 'asc',
         },
@@ -34,7 +34,18 @@ const profileServices = {
     }
   },
 
-  updateActiveProfile: async (userId, profileId) => {
+  getActiveProfile: async (userId) => {
+    try {
+      return await prisma.profile.findFirst({
+        where: { userId, active: true },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to find active profile');
+    }
+  },
+
+  setActiveProfile: async (userId, profileId) => {
     try {
       const currentActiveProfile = await prisma.profile.findFirst({
         where: { userId, active: true },
@@ -52,6 +63,17 @@ const profileServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to update active profile');
+    }
+  },
+
+  deleteProfile: async (profileId) => {
+    try {
+      await prisma.profile.delete({
+        where: { id: Number(profileId) },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete profile');
     }
   },
 };

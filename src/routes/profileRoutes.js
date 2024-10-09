@@ -15,23 +15,24 @@ router.post(
   profileController.createOrUpdateProfile,
 );
 
+router.get('/profiles', verifyAuthentication, profileController.getProfiles);
+
 router.get(
-  '/profiles',
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  }),
+  '/profile',
   verifyAuthentication,
-  profileController.getProfiles,
+  profileController.getActiveProfile,
 );
 
 router.put(
   '/profile',
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  }),
   verifyAuthentication,
   profileController.setActiveProfile,
 );
+
+router.delete(
+  '/profile/:id',
+  verifyAuthentication,
+  profileController.deleteProfile,
+);
+
 export default router;

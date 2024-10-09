@@ -28,4 +28,21 @@ export function verifyAuthentication(req, res, next) {
   res.json({ msg: 'Authentication missing or expired' });
 }
 
+export function signout(req, res) {
+  req.logout((error) => {
+    if (error) {
+      res.status(500).json({ message: `Logout error: ${error}` });
+    }
+    req.session.destroy((error) => {
+      if (error) {
+        res
+          .status(500)
+          .json({ message: `Session destruction error: ${error}` });
+      }
+      res.clearCookie('connect.sid');
+      res.status(200).json({ message: 'Logout successful' });
+    });
+  });
+}
+
 export default passport;

@@ -2,18 +2,25 @@ import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import userController from '../controllers/userController.js';
+import { signout } from '../passport/passport.js';
 
 const router = express.Router();
 
-router.post(
-  '/signin',
-  cors(),
-  userController.authenticateUser,
-  passport.authenticate('local'),
-  (req, res) => {
-    res.json({ msg: 'Sign in successful' });
-  },
-);
+router.post('/signin', userController.authenticateUser, (req, res) => {
+  passport.authenticate('local', (error, user) => {
+    if (error) {
+      res.status(401).json({ message: `Authentication error: ${error}` });
+    }
+    req.login(user, (error) => {
+      if (error) {
+        res.status(500).json({ message: `Login error: ${error}` });
+      }
+      res.status(200).json({ message: 'Login successful' });
+    });
+  })(req, res);
+});
+
+router.post('/signout', cors(), signout);
 
 router.get('/auth/google', cors(), passport.authenticate('google'));
 

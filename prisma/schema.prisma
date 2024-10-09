@@ -28,7 +28,7 @@ model Profile {
   profilePicUrl String?
   birthday      DateTime?
   active        Boolean
-  user          User          @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        Int
   posts         Post[]
   comments      Comment[]
@@ -41,8 +41,8 @@ model Profile {
 model Follow {
   profileId  Int
   followerId Int
-  follower   Profile @relation("followerRelation", fields: [profileId], references: [id])
-  following  Profile @relation("followingRelation", fields: [followerId], references: [id])
+  follower   Profile @relation("followerRelation", fields: [profileId], references: [id], onDelete: Cascade)
+  following  Profile @relation("followingRelation", fields: [followerId], references: [id], onDelete: Cascade)
 
   @@id(name: "followId", [profileId, followerId]) // Use composite primary key
   @@unique([profileId, followerId]) // Ensures that a profile cannot follow the same profile more than once
@@ -56,7 +56,7 @@ model Post {
   published Boolean    @default(false)
   comments  Comment[]
   likes     PostLike[]
-  profile   Profile?   @relation(fields: [profileId], references: [id])
+  profile   Profile?   @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int?
 }
 
@@ -64,18 +64,18 @@ model Comment {
   id        Int           @id @default(autoincrement())
   createdAt DateTime      @default(now())
   body      String
-  post      Post          @relation(fields: [postId], references: [id])
+  post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
   likes     CommentLike[]
-  profile   Profile?      @relation(fields: [profileId], references: [id])
+  profile   Profile?      @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int?
 }
 
 model PostLike {
   createdAt DateTime @default(now())
-  Post      Post     @relation(fields: [postId], references: [id])
+  Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
-  profile   Profile  @relation(fields: [profileId], references: [id])
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
 
   @@id(name: "PostLikeId", [postId, profileId])
@@ -83,9 +83,9 @@ model PostLike {
 
 model CommentLike {
   createdAt DateTime @default(now())
-  Comment   Comment  @relation(fields: [commentId], references: [id])
+  Comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId Int
-  profile   Profile  @relation(fields: [profileId], references: [id])
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
 
   @@id(name: "CommentLikeId", [commentId, profileId])
