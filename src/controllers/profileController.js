@@ -88,6 +88,51 @@ const profileController = {
       res.status(500).json({ message: error.message });
     }
   },
+
+  getFollows: async (req, res) => {
+    try {
+      const { followers, following } = await profileServices.getFollows(
+        req.params.id,
+      );
+      res.status(200).json({ followers, following });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  followProfile: async (req, res) => {
+    try {
+      await profileServices.followProfile(req.body.activeId, req.params.id);
+      res.status(200).json({ message: 'Successfully followed profile' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  getPosts: async (req, res) => {
+    try {
+      const posts = await profileServices.getPosts(req.params.id);
+
+      res.status(200).json({ posts, message: 'Successfully fetched posts' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  createPost: [
+    upload.single('image'),
+    uploadToCloudinary,
+    body('caption').trim().escape(),
+    async (req, res) => {
+      try {
+        const post = await profileServices.createPost(req.body, req.params.id);
+
+        res.status(200).json({ post, message: 'Successfully created post' });
+      } catch (error) {
+        res.status(500).json({ message: error.message });
+      }
+    },
+  ],
 };
 
 export default profileController;

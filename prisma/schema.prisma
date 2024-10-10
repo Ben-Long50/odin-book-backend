@@ -51,13 +51,13 @@ model Follow {
 model Post {
   id        Int        @id @default(autoincrement())
   createdAt DateTime   @default(now())
-  mediaUrl  String?
+  mediaUrl  String
   body      String?
-  published Boolean    @default(false)
+  published Boolean    @default(true)
   comments  Comment[]
   likes     PostLike[]
-  profile   Profile?   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int?
+  profile   Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId Int
 }
 
 model Comment {

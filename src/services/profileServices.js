@@ -20,7 +20,7 @@ const profileServices = {
       const { id, imageURL, username, petName, bio, species, breed } =
         profileData;
 
-      if (id !== null) {
+      if (id !== 'null') {
         return await prisma.profile.update({
           where: { id: Number(id) },
           data: {
@@ -91,6 +91,61 @@ const profileServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to delete profile');
+    }
+  },
+
+  getFollows: async (profileId) => {
+    try {
+      const followers = await prisma.follow.findMany({
+        where: { profileId: Number(profileId) },
+      });
+      const following = await prisma.follow.findMany({
+        where: { followerId: Number(profileId) },
+      });
+      return { followers, following };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to find followers');
+    }
+  },
+
+  followProfile: async (activeId, profileId) => {
+    try {
+      await prisma.follow.create({
+        data: { profileId: Number(profileId), followerId: Number(activeId) },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to follow profile');
+    }
+  },
+
+  getPosts: async (profileId) => {
+    try {
+      const posts = await prisma.post.findMany({
+        where: { profileId: Number(profileId) },
+      });
+      return posts;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to follow profile');
+    }
+  },
+
+  createPost: async (postData, profileId) => {
+    try {
+      const { imageURL, caption } = postData;
+      const post = await prisma.post.create({
+        data: {
+          mediaUrl: imageURL,
+          body: caption,
+          profileId: Number(profileId),
+        },
+      });
+      return post;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to create post');
     }
   },
 };

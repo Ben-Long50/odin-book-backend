@@ -35,4 +35,20 @@ router.delete(
   profileController.deleteProfile,
 );
 
+router.get('/profile/:id/follows', profileController.getFollows);
+
+router.post(
+  '/profile/:id/follow',
+  verifyAuthentication,
+  profileController.followProfile,
+);
+
+router.get('/profile/:id/posts', profileController.getPosts);
+
+router.post(
+  '/profile/:id/post',
+  verifyAuthentication,
+  profileController.createPost,
+);
+
 export default router;
