@@ -122,14 +122,25 @@ const profileController = {
   createPost: [
     upload.single('image'),
     uploadToCloudinary,
-    body('caption').trim().escape(),
+    body('caption', 'Caption must be less than 150 characters')
+      .trim()
+      .isLength({ max: 150 })
+      .escape(),
     async (req, res) => {
-      try {
-        const post = await profileServices.createPost(req.body, req.params.id);
+      const errors = validationResult(req);
 
-        res.status(200).json({ post, message: 'Successfully created post' });
-      } catch (error) {
-        res.status(500).json({ message: error.message });
+      if (!errors.isEmpty()) {
+        res.status(400).json(errors.array());
+      } else {
+        try {
+          const post = await profileServices.createPost(
+            req.body,
+            req.params.id,
+          );
+          res.status(200).json({ post, message: 'Successfully created post' });
+        } catch (error) {
+          res.status(500).json({ message: error.message });
+        }
       }
     },
   ],
