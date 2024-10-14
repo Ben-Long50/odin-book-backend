@@ -78,7 +78,7 @@ model PostLike {
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
 
-  @@id(name: "PostLikeId", [postId, profileId])
+  @@id(name: "postLikeId", [postId, profileId])
 }
 
 model CommentLike {
@@ -88,7 +88,7 @@ model CommentLike {
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
 
-  @@id(name: "CommentLikeId", [commentId, profileId])
+  @@id(name: "commentLikeId", [commentId, profileId])
 }
 
 //run "npx prisma generate" after updating models

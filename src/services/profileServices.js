@@ -120,10 +120,32 @@ const profileServices = {
     }
   },
 
+  unfollowProfile: async (activeId, profileId) => {
+    try {
+      await prisma.follow.delete({
+        where: {
+          followId: {
+            profileId: Number(profileId),
+            followerId: Number(activeId),
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to unfollow profile');
+    }
+  },
+
   getPosts: async (profileId) => {
     try {
       const posts = await prisma.post.findMany({
         where: { profileId: Number(profileId) },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          profile: true,
+          likes: true,
+          comments: true,
+        },
       });
       return posts;
     } catch (error) {

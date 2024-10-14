@@ -7,7 +7,6 @@ const postServices = {
         where: { followerId: Number(profileId) },
         select: { profileId: true },
       });
-      console.log(followedProfiles);
 
       const followedProfileIds = followedProfiles.map(
         (follow) => follow.profileId,
@@ -17,9 +16,9 @@ const postServices = {
         where: { profileId: { in: followedProfileIds } },
         orderBy: { createdAt: 'desc' },
         include: {
-          profile: {
-            select: { username: true, profilePicUrl: true },
-          },
+          profile: true,
+          likes: true,
+          comments: true,
         },
       });
 
@@ -27,6 +26,50 @@ const postServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to follow profile');
+    }
+  },
+
+  getPostLikes: async (postId) => {
+    try {
+      const postLikes = await prisma.postLike.findMany({
+        where: {
+          postId: Number(postId),
+        },
+      });
+      return postLikes;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to like post');
+    }
+  },
+
+  likePost: async (postId, profileId) => {
+    try {
+      await prisma.postLike.create({
+        data: {
+          postId: Number(postId),
+          profileId: Number(profileId),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to like post');
+    }
+  },
+
+  unlikePost: async (postId, profileId) => {
+    try {
+      await prisma.postLike.delete({
+        where: {
+          postLikeId: {
+            postId: Number(postId),
+            profileId: Number(profileId),
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to like post');
     }
   },
 };

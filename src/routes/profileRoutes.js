@@ -43,6 +43,12 @@ router.post(
   profileController.followProfile,
 );
 
+router.delete(
+  '/profile/:id/follow',
+  verifyAuthentication,
+  profileController.unfollowProfile,
+);
+
 router.get('/profile/:id/posts', profileController.getPosts);
 
 router.post(

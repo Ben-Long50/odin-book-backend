@@ -109,6 +109,17 @@ const profileController = {
     }
   },
 
+  unfollowProfile: async (req, res) => {
+    try {
+      console.log(req.body.activeId, req.params.id);
+
+      await profileServices.unfollowProfile(req.body.activeId, req.params.id);
+      res.status(200).json({ message: 'Successfully unfollowed profile' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   getPosts: async (req, res) => {
     try {
       const posts = await profileServices.getPosts(req.params.id);
