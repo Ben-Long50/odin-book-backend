@@ -13,15 +13,6 @@ const postController = {
     }
   },
 
-  getPostLikes: async (req, res) => {
-    try {
-      const postLikes = await postServices.getPostLikes(req.params.id);
-      res.status(200).json(postLikes);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
-
   likePost: async (req, res) => {
     try {
       await postServices.likePost(req.params.id, req.body.activeId);
@@ -35,6 +26,28 @@ const postController = {
     try {
       await postServices.unlikePost(req.params.id, req.body.activeId);
       res.status(200).json({ message: 'Successfully unliked post' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  createComment: async (req, res) => {
+    try {
+      await postServices.createComment(
+        req.params.id,
+        req.body.activeId,
+        req.body.comment,
+      );
+      res.status(200).json({ message: 'Successfully created comment' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  deleteComment: async (req, res) => {
+    try {
+      await postServices.deleteComment(req.body.commentId);
+      res.status(200).json({ message: 'Successfully deleted comment' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -18,7 +18,12 @@ const postServices = {
         include: {
           profile: true,
           likes: true,
-          comments: true,
+          comments: {
+            include: {
+              profile: true,
+              likes: true,
+            },
+          },
         },
       });
 
@@ -26,20 +31,6 @@ const postServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to follow profile');
-    }
-  },
-
-  getPostLikes: async (postId) => {
-    try {
-      const postLikes = await prisma.postLike.findMany({
-        where: {
-          postId: Number(postId),
-        },
-      });
-      return postLikes;
-    } catch (error) {
-      console.error(error);
-      throw new Error('Failed to like post');
     }
   },
 
@@ -69,7 +60,35 @@ const postServices = {
       });
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to like post');
+      throw new Error('Failed to unlike post');
+    }
+  },
+
+  createComment: async (postId, profileId, comment) => {
+    try {
+      await prisma.comment.create({
+        data: {
+          postId: Number(postId),
+          profileId: Number(profileId),
+          body: comment,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to comment');
+    }
+  },
+
+  deleteComment: async (commentId) => {
+    try {
+      await prisma.comment.delete({
+        where: {
+          id: Number(commentId),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete comment');
     }
   },
 };

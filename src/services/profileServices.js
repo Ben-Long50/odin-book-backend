@@ -144,7 +144,12 @@ const profileServices = {
         include: {
           profile: true,
           likes: true,
-          comments: true,
+          comments: {
+            include: {
+              profile: true,
+              likes: true,
+            },
+          },
         },
       });
       return posts;
