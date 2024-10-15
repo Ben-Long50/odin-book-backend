@@ -19,23 +19,25 @@ model User {
 }
 
 model Profile {
-  id            Int           @id @default(autoincrement())
-  username      String        @unique
-  petName       String
-  species       String?
-  breed         String?
-  bio           String?
-  profilePicUrl String?
-  birthday      DateTime?
-  active        Boolean
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        Int
-  posts         Post[]
-  comments      Comment[]
-  postLikes     PostLike[]
-  commentLikes  CommentLike[]
-  followers     Follow[]      @relation("followerRelation") // Profiles that follow this profile
-  following     Follow[]      @relation("followingRelation") // Profiles this profile is following
+  id               Int           @id @default(autoincrement())
+  username         String        @unique
+  petName          String
+  species          String?
+  breed            String?
+  bio              String?
+  profilePicUrl    String?
+  birthday         DateTime?
+  active           Boolean
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           Int
+  posts            Post[]
+  comments         Comment[]
+  postLikes        PostLike[]
+  commentLikes     CommentLike[]
+  followers        Follow[]      @relation("followerRelation") // Profiles that follow this profile
+  following        Follow[]      @relation("followingRelation") // Profiles this profile is following
+  personalSearches Search[]      @relation("activeProfileRelation")
+  foreignSearches  Search[]      @relation("searchedRelation")
 }
 
 model Follow {
@@ -73,7 +75,7 @@ model Comment {
 
 model PostLike {
   createdAt DateTime @default(now())
-  Post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId    Int
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
@@ -83,12 +85,22 @@ model PostLike {
 
 model CommentLike {
   createdAt DateTime @default(now())
-  Comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
   commentId Int
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
 
   @@id(name: "commentLikeId", [commentId, profileId])
+}
+
+model Search {
+  createdAt         DateTime @default(now())
+  searchedProfileId Int
+  profileId         Int
+  searchedProfile   Profile  @relation("searchedRelation", fields: [searchedProfileId], references: [id], onDelete: Cascade)
+  profile           Profile  @relation("activeProfileRelation", fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id(name: "searchId", [searchedProfileId, profileId])
 }
 
 //run "npx prisma generate" after updating models
