@@ -29,13 +29,13 @@ router.put(
   profileController.setActiveProfile,
 );
 
+router.get('/profile/:id', profileController.getProfile);
+
 router.delete(
   '/profile/:id',
   verifyAuthentication,
   profileController.deleteProfile,
 );
-
-router.get('/profile/:id/follows', profileController.getFollows);
 
 router.post(
   '/profile/:id/follow',

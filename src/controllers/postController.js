@@ -13,6 +13,19 @@ const postController = {
     }
   },
 
+  getExplorePosts: async (req, res) => {
+    try {
+      const posts = await postServices.getExplorePosts(req.query.activeId);
+      if (!posts) {
+        return res.status(400).json({ message: 'No explore posts found' });
+      }
+
+      res.status(200).json({ posts });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   likePost: async (req, res) => {
     try {
       await postServices.likePost(req.params.id, req.body.activeId);

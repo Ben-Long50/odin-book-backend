@@ -5,6 +5,12 @@ const searchServices = {
     try {
       const profiles = await prisma.profile.findMany({
         where: { username: { contains: query, mode: 'insensitive' } },
+        select: {
+          id: true,
+          username: true,
+          petName: true,
+          profilePicUrl: true,
+        },
         orderBy: {
           username: 'asc',
         },
@@ -22,11 +28,14 @@ const searchServices = {
         where: {
           profileId: Number(activeId),
         },
+
         orderBy: {
           createdAt: 'desc',
         },
         include: {
-          searchedProfile: true,
+          searchedProfile: {
+            select: { id: true, username: true, profilePicUrl: true },
+          },
         },
       });
       return searches;

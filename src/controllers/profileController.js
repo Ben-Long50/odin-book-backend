@@ -89,12 +89,10 @@ const profileController = {
     }
   },
 
-  getFollows: async (req, res) => {
+  getProfile: async (req, res) => {
     try {
-      const { followers, following } = await profileServices.getFollows(
-        req.params.id,
-      );
-      res.status(200).json({ followers, following });
+      const profile = await profileServices.getProfile(req.params.id);
+      res.status(200).json({ profile });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

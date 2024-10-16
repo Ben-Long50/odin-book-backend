@@ -30,7 +30,44 @@ const postServices = {
       return posts;
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to follow profile');
+      throw new Error('Failed to get feed posts');
+    }
+  },
+
+  getExplorePosts: async (activeId) => {
+    try {
+      const followedProfiles = await prisma.follow.findMany({
+        where: { followerId: Number(activeId) },
+        select: { profileId: true },
+      });
+
+      const followedProfileIds = followedProfiles.map(
+        (follow) => follow.profileId,
+      );
+
+      const posts = await prisma.post.findMany({
+        where: { profileId: { notIn: followedProfileIds } },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          profile: {
+            include: {
+              followers: true,
+            },
+          },
+          likes: true,
+          comments: {
+            include: {
+              profile: true,
+              likes: true,
+            },
+          },
+        },
+      });
+
+      return posts;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to get explore posts');
     }
   },
 

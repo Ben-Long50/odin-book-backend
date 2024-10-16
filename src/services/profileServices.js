@@ -55,6 +55,7 @@ const profileServices = {
     try {
       return await prisma.profile.findFirst({
         where: { userId, active: true },
+        include: { followers: true, following: true },
       });
     } catch (error) {
       console.error(error);
@@ -94,18 +95,16 @@ const profileServices = {
     }
   },
 
-  getFollows: async (profileId) => {
+  getProfile: async (profileId) => {
     try {
-      const followers = await prisma.follow.findMany({
-        where: { profileId: Number(profileId) },
+      const profile = await prisma.profile.findUnique({
+        where: { id: Number(profileId) },
+        include: { followers: true, following: true, posts: true },
       });
-      const following = await prisma.follow.findMany({
-        where: { followerId: Number(profileId) },
-      });
-      return { followers, following };
+      return profile;
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to find followers');
+      throw new Error('Failed to find profile');
     }
   },
 

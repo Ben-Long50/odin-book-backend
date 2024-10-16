@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.get('/posts/:id', verifyAuthentication, postController.getFollowedPosts);
 
+router.get('/explore/posts', postController.getExplorePosts);
+
 router.post('/posts/:id/like', verifyAuthentication, postController.likePost);
 
 router.delete(
