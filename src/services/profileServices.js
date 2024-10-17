@@ -55,7 +55,22 @@ const profileServices = {
     try {
       return await prisma.profile.findFirst({
         where: { userId, active: true },
-        include: { followers: true, following: true },
+        include: {
+          followers: true,
+          following: true,
+          notified: {
+            include: {
+              profile: {
+                select: {
+                  id: true,
+                  username: true,
+                  profilePicUrl: true,
+                  petName: true,
+                },
+              },
+            },
+          },
+        },
       });
     } catch (error) {
       console.error(error);

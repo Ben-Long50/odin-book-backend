@@ -1,3 +1,4 @@
+import notificationServices from '../services/notificationServices.js';
 import postServices from '../services/postServices.js';
 
 const postController = {
@@ -28,7 +29,17 @@ const postController = {
 
   likePost: async (req, res) => {
     try {
-      await postServices.likePost(req.params.id, req.body.activeId);
+      const postLike = await postServices.likePost(
+        req.params.id,
+        req.body.activeId,
+      );
+      console.log(postLike);
+
+      await notificationServices.createPostLikeNotification(
+        req.body.activeId,
+        postLike.post.profileId,
+        postLike.postLike.id,
+      );
       res.status(200).json({ message: 'Successfully liked post' });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -46,10 +57,17 @@ const postController = {
 
   createComment: async (req, res) => {
     try {
-      await postServices.createComment(
+      const comment = await postServices.createComment(
         req.params.id,
         req.body.activeId,
         req.body.comment,
+      );
+      console.log(req.body.profileId, req.body.activeId, comment);
+
+      await notificationServices.createCommentNotification(
+        req.body.profileId,
+        req.body.activeId,
+        comment.id,
       );
       res.status(200).json({ message: 'Successfully created comment' });
     } catch (error) {

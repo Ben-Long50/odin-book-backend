@@ -2,6 +2,7 @@ import { body, validationResult } from 'express-validator';
 import profileServices from '../services/profileServices.js';
 import upload from '../utils/multer.js';
 import { uploadToCloudinary } from '../utils/cloudinary.js';
+import notificationServices from '../services/notificationServices.js';
 
 const profileController = {
   getProfiles: async (req, res) => {
@@ -101,6 +102,10 @@ const profileController = {
   followProfile: async (req, res) => {
     try {
       await profileServices.followProfile(req.body.activeId, req.params.id);
+      await notificationServices.createFollowNotification(
+        req.body.activeId,
+        req.params.id,
+      );
       res.status(200).json({ message: 'Successfully followed profile' });
     } catch (error) {
       res.status(500).json({ message: error.message });
@@ -121,7 +126,6 @@ const profileController = {
   getPosts: async (req, res) => {
     try {
       const posts = await profileServices.getPosts(req.params.id);
-
       res.status(200).json({ posts, message: 'Successfully fetched posts' });
     } catch (error) {
       res.status(500).json({ message: error.message });

@@ -46,7 +46,9 @@ const postServices = {
       );
 
       const posts = await prisma.post.findMany({
-        where: { profileId: { notIn: followedProfileIds } },
+        where: {
+          profileId: { notIn: [...followedProfileIds, Number(activeId)] },
+        },
         orderBy: { createdAt: 'desc' },
         include: {
           profile: {
@@ -73,12 +75,21 @@ const postServices = {
 
   likePost: async (postId, profileId) => {
     try {
-      await prisma.postLike.create({
+      const postLike = await prisma.postLike.create({
         data: {
           postId: Number(postId),
           profileId: Number(profileId),
         },
       });
+
+      const post = await prisma.post.findUnique({
+        where: { id: Number(postId) },
+        select: {
+          profileId: true,
+        },
+      });
+
+      return { postLike, post };
     } catch (error) {
       console.error(error);
       throw new Error('Failed to like post');
@@ -89,9 +100,9 @@ const postServices = {
     try {
       await prisma.postLike.delete({
         where: {
-          postLikeId: {
-            postId: Number(postId),
+          profileId_postId: {
             profileId: Number(profileId),
+            postId: Number(postId),
           },
         },
       });
@@ -101,15 +112,16 @@ const postServices = {
     }
   },
 
-  createComment: async (postId, profileId, comment) => {
+  createComment: async (postId, profileId, commentBody) => {
     try {
-      await prisma.comment.create({
+      const comment = await prisma.comment.create({
         data: {
           postId: Number(postId),
           profileId: Number(profileId),
-          body: comment,
+          body: commentBody,
         },
       });
+      return comment;
     } catch (error) {
       console.error(error);
       throw new Error('Failed to comment');

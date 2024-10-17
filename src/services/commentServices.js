@@ -3,12 +3,21 @@ import prisma from '../config/database.js';
 const commentServices = {
   likeComment: async (commentId, profileId) => {
     try {
-      await prisma.commentLike.create({
+      const commentLike = await prisma.commentLike.create({
         data: {
           commentId: Number(commentId),
           profileId: Number(profileId),
         },
       });
+
+      const comment = await prisma.comment.findUnique({
+        where: { id: Number(commentId) },
+        select: {
+          profileId: true,
+        },
+      });
+
+      return { commentLike, comment };
     } catch (error) {
       console.error(error);
       throw new Error('Failed to like comment');
@@ -19,9 +28,9 @@ const commentServices = {
     try {
       await prisma.commentLike.delete({
         where: {
-          commentLikeId: {
-            commentId: Number(commentId),
+          profileId_commentId: {
             profileId: Number(profileId),
+            commentId: Number(commentId),
           },
         },
       });

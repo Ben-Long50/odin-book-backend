@@ -19,8 +19,8 @@ model User {
 }
 
 model Profile {
-  id               Int           @id @default(autoincrement())
-  username         String        @unique
+  id               Int            @id @default(autoincrement())
+  username         String         @unique
   petName          String
   species          String?
   breed            String?
@@ -28,26 +28,29 @@ model Profile {
   profilePicUrl    String?
   birthday         DateTime?
   active           Boolean
-  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId           Int
   posts            Post[]
   comments         Comment[]
   postLikes        PostLike[]
   commentLikes     CommentLike[]
-  followers        Follow[]      @relation("followerRelation") // Profiles that follow this profile
-  following        Follow[]      @relation("followingRelation") // Profiles this profile is following
-  personalSearches Search[]      @relation("activeProfileRelation")
-  foreignSearches  Search[]      @relation("searchedRelation")
+  followers        Follow[]       @relation("followerRelation")
+  following        Follow[]       @relation("followingRelation")
+  personalSearches Search[]       @relation("searchingRelation")
+  foreignSearches  Search[]       @relation("searchedRelation")
+  notified         Notification[] @relation("notifiedRelation")
+  notifying        Notification[] @relation("notifyingRelation")
 }
 
 model Follow {
-  profileId  Int
-  followerId Int
-  follower   Profile @relation("followerRelation", fields: [profileId], references: [id], onDelete: Cascade)
-  following  Profile @relation("followingRelation", fields: [followerId], references: [id], onDelete: Cascade)
+  profileId    Int
+  followerId   Int
+  follower     Profile        @relation("followerRelation", fields: [profileId], references: [id], onDelete: Cascade)
+  following    Profile        @relation("followingRelation", fields: [followerId], references: [id], onDelete: Cascade)
+  Notification Notification[] @relation("followNotification")
 
-  @@id(name: "followId", [profileId, followerId]) // Use composite primary key
-  @@unique([profileId, followerId]) // Ensures that a profile cannot follow the same profile more than once
+  @@id(name: "followId", [profileId, followerId])
+  @@unique([profileId, followerId])
 }
 
 model Post {
@@ -63,34 +66,39 @@ model Post {
 }
 
 model Comment {
-  id        Int           @id @default(autoincrement())
-  createdAt DateTime      @default(now())
-  body      String
-  post      Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    Int
-  likes     CommentLike[]
-  profile   Profile?      @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int?
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  body         String
+  post         Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId       Int
+  likes        CommentLike[]
+  profile      Profile?       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    Int?
+  Notification Notification[] @relation("commentNotification")
 }
 
 model PostLike {
-  createdAt DateTime @default(now())
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
-  postId    Int
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  post         Post           @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId       Int
+  profile      Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    Int
+  Notification Notification[] @relation("postLikeNotification")
 
-  @@id(name: "postLikeId", [postId, profileId])
+  @@unique([profileId, postId])
 }
 
 model CommentLike {
-  createdAt DateTime @default(now())
-  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
-  commentId Int
-  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  comment      Comment        @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId    Int
+  profile      Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    Int
+  Notification Notification[] @relation("commentLikeNotification")
 
-  @@id(name: "commentLikeId", [commentId, profileId])
+  @@unique([profileId, commentId])
 }
 
 model Search {
@@ -98,9 +106,29 @@ model Search {
   searchedProfileId Int
   profileId         Int
   searchedProfile   Profile  @relation("searchedRelation", fields: [searchedProfileId], references: [id], onDelete: Cascade)
-  profile           Profile  @relation("activeProfileRelation", fields: [profileId], references: [id], onDelete: Cascade)
+  profile           Profile  @relation("searchingRelation", fields: [profileId], references: [id], onDelete: Cascade)
 
   @@id(name: "searchId", [searchedProfileId, profileId])
+}
+
+model Notification {
+  id                Int      @id @default(autoincrement())
+  createdAt         DateTime @default(now())
+  followerId        Int?
+  followingId       Int?
+  commentId         Int?
+  postLikeId        Int?
+  commentLikeId     Int?
+  notifiedProfileId Int
+  profileId         Int
+
+  newFollow      Follow?      @relation("followNotification", fields: [followingId, followerId], references: [profileId, followerId], onDelete: Cascade)
+  newComment     Comment?     @relation("commentNotification", fields: [commentId], references: [id], onDelete: Cascade)
+  newPostLike    PostLike?    @relation("postLikeNotification", fields: [postLikeId], references: [id], onDelete: Cascade)
+  newCommentLike CommentLike? @relation("commentLikeNotification", fields: [commentLikeId], references: [id], onDelete: Cascade)
+
+  notifiedProfile Profile @relation("notifiedRelation", fields: [notifiedProfileId], references: [id], onDelete: Cascade)
+  profile         Profile @relation("notifyingRelation", fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 //run "npx prisma generate" after updating models
