@@ -33,7 +33,6 @@ const postController = {
         req.params.id,
         req.body.activeId,
       );
-      console.log(postLike);
 
       await notificationServices.createPostLikeNotification(
         req.body.activeId,
@@ -62,7 +61,6 @@ const postController = {
         req.body.activeId,
         req.body.comment,
       );
-      console.log(req.body.profileId, req.body.activeId, comment);
 
       await notificationServices.createCommentNotification(
         req.body.profileId,

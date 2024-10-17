@@ -61,6 +61,28 @@ const notificationServices = {
       throw new Error('Failed to send comment like notification');
     }
   },
+
+  deleteNotification: async (notificationId) => {
+    try {
+      await prisma.notification.delete({
+        where: { id: Number(notificationId) },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete notification');
+    }
+  },
+
+  deleteAllNotifications: async (activeId) => {
+    try {
+      await prisma.notification.deleteMany({
+        where: { notifiedProfileId: Number(activeId) },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete all notification');
+    }
+  },
 };
 
 export default notificationServices;
