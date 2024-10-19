@@ -4,6 +4,14 @@ import { verifyAuthentication } from '../passport/passport.js';
 
 const router = express.Router();
 
+router.get('/post/:postId/comments', commentController.getComments);
+
+router.delete(
+  '/comment/:commentId',
+  verifyAuthentication,
+  commentController.deleteComment,
+);
+
 router.post(
   '/comments/:id/like',
   verifyAuthentication,

@@ -72,15 +72,6 @@ const postController = {
       res.status(500).json({ error: error.message });
     }
   },
-
-  deleteComment: async (req, res) => {
-    try {
-      await postServices.deleteComment(req.body.commentId);
-      res.status(200).json({ message: 'Successfully deleted comment' });
-    } catch (error) {
-      res.status(500).json({ error: error.message });
-    }
-  },
 };
 
 export default postController;

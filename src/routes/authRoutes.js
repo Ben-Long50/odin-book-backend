@@ -20,7 +20,7 @@ router.post('/signin', userController.authenticateUser, (req, res) => {
   })(req, res);
 });
 
-router.post('/signout', cors(), signout);
+router.post('/signout', signout);
 
 router.get('/auth/google', cors(), passport.authenticate('google'));
 

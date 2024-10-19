@@ -7,10 +7,6 @@ const router = express.Router();
 
 router.post(
   '/profile',
-  cors({
-    origin: 'http://localhost:5173',
-    credentials: true,
-  }),
   verifyAuthentication,
   profileController.createOrUpdateProfile,
 );

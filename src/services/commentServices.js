@@ -1,6 +1,35 @@
 import prisma from '../config/database.js';
 
 const commentServices = {
+  getComments: async (postId) => {
+    try {
+      const comments = await prisma.comment.findMany({
+        where: {
+          postId: Number(postId),
+        },
+        include: { profile: true, likes: true },
+      });
+
+      return comments;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to find comments');
+    }
+  },
+
+  deleteComment: async (commentId) => {
+    try {
+      await prisma.comment.delete({
+        where: {
+          id: Number(commentId),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete comment');
+    }
+  },
+
   likeComment: async (commentId, profileId) => {
     try {
       const commentLike = await prisma.commentLike.create({

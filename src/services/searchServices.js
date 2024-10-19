@@ -34,7 +34,12 @@ const searchServices = {
         },
         include: {
           searchedProfile: {
-            select: { id: true, username: true, profilePicUrl: true },
+            select: {
+              id: true,
+              username: true,
+              petName: true,
+              profilePicUrl: true,
+            },
           },
         },
       });

@@ -35,8 +35,7 @@ const profileController = {
         res.status(400).json(errors.array());
       } else {
         try {
-          console.log(req.body);
-
+          req.body.active = false;
           const profile = await profileServices.createOrUpdateProfile(
             req.body,
             req.user.id,
@@ -137,8 +136,7 @@ const profileController = {
     uploadToCloudinary,
     body('caption', 'Caption must be less than 150 characters')
       .trim()
-      .isLength({ max: 150 })
-      .escape(),
+      .isLength({ max: 150 }),
     async (req, res) => {
       const errors = validationResult(req);
 

@@ -17,7 +17,7 @@ const profileServices = {
 
   createOrUpdateProfile: async (profileData, userId) => {
     try {
-      const { id, imageURL, username, petName, bio, species, breed } =
+      const { id, imageURL, username, petName, bio, species, breed, active } =
         profileData;
 
       if (id !== 'null') {
@@ -41,7 +41,7 @@ const profileServices = {
           bio,
           species,
           breed,
-          active: false,
+          active,
           userId,
         },
       });
@@ -56,8 +56,18 @@ const profileServices = {
       return await prisma.profile.findFirst({
         where: { userId, active: true },
         include: {
-          followers: true,
-          following: true,
+          followers: {
+            select: {
+              followerId: true,
+              following: true,
+            },
+          },
+          following: {
+            select: {
+              profileId: true,
+              follower: true,
+            },
+          },
           notified: {
             include: {
               profile: {
@@ -114,7 +124,21 @@ const profileServices = {
     try {
       const profile = await prisma.profile.findUnique({
         where: { id: Number(profileId) },
-        include: { followers: true, following: true, posts: true },
+        include: {
+          followers: {
+            select: {
+              followerId: true,
+              following: true,
+            },
+          },
+          following: {
+            select: {
+              profileId: true,
+              follower: true,
+            },
+          },
+          posts: true,
+        },
       });
       return profile;
     } catch (error) {

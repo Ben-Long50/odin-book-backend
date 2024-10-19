@@ -22,10 +22,4 @@ router.post(
   postController.createComment,
 );
 
-router.delete(
-  '/posts/:id/comment',
-  verifyAuthentication,
-  postController.deleteComment,
-);
-
 export default router;

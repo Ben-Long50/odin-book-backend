@@ -18,12 +18,7 @@ const postServices = {
         include: {
           profile: true,
           likes: true,
-          comments: {
-            include: {
-              profile: true,
-              likes: true,
-            },
-          },
+          comments: true,
         },
       });
 
@@ -125,19 +120,6 @@ const postServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to comment');
-    }
-  },
-
-  deleteComment: async (commentId) => {
-    try {
-      await prisma.comment.delete({
-        where: {
-          id: Number(commentId),
-        },
-      });
-    } catch (error) {
-      console.error(error);
-      throw new Error('Failed to delete comment');
     }
   },
 };

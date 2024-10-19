@@ -1,6 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import userServices from '../services/userServices.js';
+import profileServices from '../services/profileServices.js';
 
 const userController = {
   getUsers: async (req, res) => {
@@ -75,7 +76,18 @@ const userController = {
             password: hashedPassword,
           };
           const newUser = await userServices.createUser(userData);
-          res.status(200).json(newUser);
+          console.log(newUser);
+
+          const defaultProfile = await profileServices.createOrUpdateProfile(
+            {
+              id: 'null',
+              username: newUser.email,
+              petName: 'Default',
+              active: true,
+            },
+            newUser.id,
+          );
+          res.status(200).json({ newUser, defaultProfile });
         } catch (error) {
           res.status(500).json({ error: error.message });
         }
