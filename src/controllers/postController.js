@@ -14,6 +14,15 @@ const postController = {
     }
   },
 
+  deletePost: async (req, res) => {
+    try {
+      await postServices.deletePost(req.params.id);
+      res.status(200).json({ message: 'Successfully deleted post' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   getExplorePosts: async (req, res) => {
     try {
       const posts = await postServices.getExplorePosts(req.query.activeId);

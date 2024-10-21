@@ -29,6 +29,19 @@ const postServices = {
     }
   },
 
+  deletePost: async (postId) => {
+    try {
+      await prisma.post.delete({
+        where: {
+          id: Number(postId),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete post');
+    }
+  },
+
   getExplorePosts: async (activeId) => {
     try {
       const followedProfiles = await prisma.follow.findMany({
