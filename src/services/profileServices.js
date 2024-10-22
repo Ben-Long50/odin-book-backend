@@ -79,6 +79,14 @@ const profileServices = {
                 },
               },
             },
+            orderBy: {
+              createdAt: 'desc',
+            },
+          },
+          bookmarks: {
+            select: {
+              postId: true,
+            },
           },
         },
       });
@@ -211,6 +219,79 @@ const profileServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to create post');
+    }
+  },
+
+  getBookmarks: async (activeId) => {
+    try {
+      const bookmarks = await prisma.bookmark.findMany({
+        where: {
+          profileId: Number(activeId),
+        },
+        orderBy: { createdAt: 'desc' },
+        include: {
+          post: {
+            include: {
+              profile: true,
+              likes: true,
+              comments: {
+                include: {
+                  profile: true,
+                  likes: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return bookmarks;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to find bookmarks');
+    }
+  },
+
+  createBookmark: async (activeId, postId) => {
+    try {
+      const bookmark = await prisma.bookmark.create({
+        data: {
+          profileId: Number(activeId),
+          postId: Number(postId),
+        },
+      });
+      return bookmark;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to create bookmark');
+    }
+  },
+
+  deleteBookmark: async (activeId, postId) => {
+    try {
+      await prisma.bookmark.delete({
+        where: {
+          profileId_postId: {
+            profileId: Number(activeId),
+            postId: Number(postId),
+          },
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete bookmark');
+    }
+  },
+
+  deleteAllBookmarks: async (activeId) => {
+    try {
+      await prisma.bookmark.deleteMany({
+        where: {
+          profileId: Number(activeId),
+        },
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to delete all bookmarks');
     }
   },
 };

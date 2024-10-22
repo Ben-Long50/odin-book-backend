@@ -40,6 +40,7 @@ model Profile {
   foreignSearches  Search[]       @relation("searchedRelation")
   notified         Notification[] @relation("notifiedRelation")
   notifying        Notification[] @relation("notifyingRelation")
+  bookmarks        Bookmark[]
 }
 
 model Follow {
@@ -63,6 +64,7 @@ model Post {
   likes     PostLike[]
   profile   Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
   profileId Int
+  Bookmark  Bookmark[]
 }
 
 model Comment {
@@ -129,6 +131,17 @@ model Notification {
 
   notifiedProfile Profile @relation("notifiedRelation", fields: [notifiedProfileId], references: [id], onDelete: Cascade)
   profile         Profile @relation("notifyingRelation", fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Bookmark {
+  createdAt DateTime @default(now())
+  profileId Int
+  postId    Int
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([profileId, postId])
+  @@unique([profileId, postId])
 }
 
 //run "npx prisma generate" after updating models

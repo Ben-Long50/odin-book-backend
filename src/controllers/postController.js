@@ -8,7 +8,9 @@ const postController = {
       if (!posts) {
         return res.status(400).json({ message: 'No posts found' });
       }
-      res.status(200).json(posts);
+      res
+        .status(200)
+        .json({ posts, message: 'Successfully fetched feed posts' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

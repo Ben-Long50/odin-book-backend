@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import profileController from '../controllers/profileController.js';
 import { verifyAuthentication } from '../passport/passport.js';
 
@@ -51,6 +50,30 @@ router.post(
   '/profile/:id/post',
   verifyAuthentication,
   profileController.createPost,
+);
+
+router.get(
+  '/profiles/:profileId/bookmarks',
+  verifyAuthentication,
+  profileController.getBookmarks,
+);
+
+router.post(
+  '/profiles/:profileId/bookmarks',
+  verifyAuthentication,
+  profileController.createBookmark,
+);
+
+router.delete(
+  '/profiles/:profileId/bookmarks/:postId',
+  verifyAuthentication,
+  profileController.deleteBookmark,
+);
+
+router.delete(
+  '/profiles/:profileId/bookmarks',
+  verifyAuthentication,
+  profileController.deleteAllBookmarks,
 );
 
 export default router;

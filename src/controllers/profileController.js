@@ -55,7 +55,6 @@ const profileController = {
   getActiveProfile: async (req, res) => {
     try {
       const activeProfile = await profileServices.getActiveProfile(req.user.id);
-
       res.json({
         activeProfile,
         message: 'Successfully fetched active profile',
@@ -92,7 +91,9 @@ const profileController = {
   getProfile: async (req, res) => {
     try {
       const profile = await profileServices.getProfile(req.params.id);
-      res.status(200).json({ profile });
+      res
+        .status(200)
+        .json({ profile, message: 'Successfully fetched foreign profile' });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -125,7 +126,9 @@ const profileController = {
   getPosts: async (req, res) => {
     try {
       const posts = await profileServices.getPosts(req.params.id);
-      res.status(200).json({ posts, message: 'Successfully fetched posts' });
+      res
+        .status(200)
+        .json({ posts, message: 'Successfully fetched profile posts' });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
@@ -155,6 +158,52 @@ const profileController = {
       }
     },
   ],
+
+  getBookmarks: async (req, res) => {
+    try {
+      const bookmarks = await profileServices.getBookmarks(
+        req.params.profileId,
+      );
+      res
+        .status(200)
+        .json({ bookmarks, message: 'Successfully fetched bookmarks' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  createBookmark: async (req, res) => {
+    try {
+      await profileServices.createBookmark(
+        req.params.profileId,
+        req.body.postId,
+      );
+      res.status(200).json({ message: 'Successfully created bookmark' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  deleteBookmark: async (req, res) => {
+    try {
+      await profileServices.deleteBookmark(
+        req.params.profileId,
+        req.params.postId,
+      );
+      res.status(200).json({ message: 'Successfully deleted bookmark' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  deleteAllBookmarks: async (req, res) => {
+    try {
+      await profileServices.deleteAllBookmarks(req.params.profileId);
+      res.status(200).json({ message: 'Successfully deleted all bookmarks' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
 };
 
 export default profileController;
