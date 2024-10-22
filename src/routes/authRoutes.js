@@ -2,7 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import passport from 'passport';
 import userController from '../controllers/userController.js';
-import { signout } from '../passport/passport.js';
+import {
+  sendAuthStatus,
+  signout,
+  verifyAuthentication,
+} from '../passport/passport.js';
 
 const router = express.Router();
 
@@ -21,6 +25,8 @@ router.post('/signin', userController.authenticateUser, (req, res) => {
 });
 
 router.post('/signout', signout);
+
+router.get('/auth/status', verifyAuthentication, sendAuthStatus);
 
 router.get('/auth/google', cors(), passport.authenticate('google'));
 

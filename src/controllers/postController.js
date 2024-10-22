@@ -31,8 +31,9 @@ const postController = {
       if (!posts) {
         return res.status(400).json({ message: 'No explore posts found' });
       }
-
-      res.status(200).json({ posts });
+      res
+        .status(200)
+        .json({ posts, message: 'Successfully fetched explore posts' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
