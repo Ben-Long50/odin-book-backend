@@ -99,6 +99,20 @@ const profileController = {
     }
   },
 
+  getFollowStatus: async (req, res) => {
+    try {
+      const status = await profileServices.getFollowStatus(
+        req.params.activeId,
+        req.params.profileId,
+      );
+      res
+        .status(200)
+        .json({ status, message: 'Successfully fetched follow status' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
   followProfile: async (req, res) => {
     try {
       await profileServices.followProfile(req.body.activeId, req.params.id);

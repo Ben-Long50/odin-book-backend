@@ -78,6 +78,14 @@ const profileServices = {
                   petName: true,
                 },
               },
+              newFollow: true,
+              newComment: { include: { post: { include: { likes: true } } } },
+              newPostLike: { include: { post: { include: { likes: true } } } },
+              newCommentLike: {
+                include: {
+                  comment: { include: { post: { include: { likes: true } } } },
+                },
+              },
             },
             orderBy: {
               createdAt: 'desc',
@@ -152,6 +160,25 @@ const profileServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to find profile');
+    }
+  },
+
+  getFollowStatus: async (activeId, profileId) => {
+    try {
+      const status = await prisma.follow.findUnique({
+        where: {
+          followId: {
+            profileId: Number(profileId),
+            followerId: Number(activeId),
+          },
+        },
+      });
+      console.log(status);
+
+      return !!status;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to follow profile');
     }
   },
 

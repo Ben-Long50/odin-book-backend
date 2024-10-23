@@ -32,6 +32,12 @@ router.delete(
   profileController.deleteProfile,
 );
 
+router.get(
+  '/profile/:activeId/follows/:profileId',
+  verifyAuthentication,
+  profileController.getFollowStatus,
+);
+
 router.post(
   '/profile/:id/follow',
   verifyAuthentication,

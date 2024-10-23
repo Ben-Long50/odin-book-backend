@@ -8,6 +8,7 @@ const commentServices = {
           postId: Number(postId),
         },
         include: { profile: true, likes: true },
+        orderBy: { createdAt: 'desc' },
       });
 
       return comments;
