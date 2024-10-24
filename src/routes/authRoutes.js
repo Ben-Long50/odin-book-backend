@@ -26,7 +26,7 @@ router.post('/signin', userController.authenticateUser, (req, res) => {
 
 router.post('/signout', signout);
 
-router.get('/auth/status', verifyAuthentication, sendAuthStatus);
+router.get('/auth/status', sendAuthStatus);
 
 router.get('/auth/google', cors(), passport.authenticate('google'));
 

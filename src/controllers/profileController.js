@@ -68,7 +68,7 @@ const profileController = {
     try {
       const activeProfile = await profileServices.setActiveProfile(
         req.user.id,
-        req.body.id,
+        req.params.profileId,
       );
       res.status(200).json({
         activeProfile,
@@ -214,6 +214,19 @@ const profileController = {
     try {
       await profileServices.deleteAllBookmarks(req.params.profileId);
       res.status(200).json({ message: 'Successfully deleted all bookmarks' });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  },
+
+  getNotifications: async (req, res) => {
+    try {
+      const notifications = await profileServices.getNotifications(
+        req.params.profileId,
+      );
+      res
+        .status(200)
+        .json({ notifications, message: 'Successfully fetched notifications' });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }

@@ -19,7 +19,7 @@ router.get(
 );
 
 router.put(
-  '/profile',
+  '/profiles/:profileId',
   verifyAuthentication,
   profileController.setActiveProfile,
 );
@@ -80,6 +80,12 @@ router.delete(
   '/profiles/:profileId/bookmarks',
   verifyAuthentication,
   profileController.deleteAllBookmarks,
+);
+
+router.get(
+  '/profiles/:profileId/notifications',
+  verifyAuthentication,
+  profileController.getNotifications,
 );
 
 export default router;

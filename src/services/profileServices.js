@@ -68,29 +68,6 @@ const profileServices = {
               follower: true,
             },
           },
-          notified: {
-            include: {
-              profile: {
-                select: {
-                  id: true,
-                  username: true,
-                  profilePicUrl: true,
-                  petName: true,
-                },
-              },
-              newFollow: true,
-              newComment: { include: { post: { include: { likes: true } } } },
-              newPostLike: { include: { post: { include: { likes: true } } } },
-              newCommentLike: {
-                include: {
-                  comment: { include: { post: { include: { likes: true } } } },
-                },
-              },
-            },
-            orderBy: {
-              createdAt: 'desc',
-            },
-          },
           bookmarks: {
             select: {
               postId: true,
@@ -116,7 +93,7 @@ const profileServices = {
         });
       }
       return await prisma.profile.update({
-        where: { id: profileId },
+        where: { id: Number(profileId) },
         data: { active: true },
       });
     } catch (error) {
@@ -319,6 +296,45 @@ const profileServices = {
     } catch (error) {
       console.error(error);
       throw new Error('Failed to delete all bookmarks');
+    }
+  },
+
+  getNotifications: async (profileId) => {
+    try {
+      const notifications = await prisma.notification.findMany({
+        where: { notifiedProfileId: Number(profileId) },
+        include: {
+          profile: {
+            select: {
+              id: true,
+              username: true,
+              profilePicUrl: true,
+              petName: true,
+            },
+          },
+          newFollow: true,
+          newComment: {
+            include: { post: { include: { likes: true, profile: true } } },
+          },
+          newPostLike: {
+            include: { post: { include: { likes: true, profile: true } } },
+          },
+          newCommentLike: {
+            include: {
+              comment: {
+                include: { post: { include: { likes: true, profile: true } } },
+              },
+            },
+          },
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+      return notifications;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to find notifications');
     }
   },
 };

@@ -25,17 +25,18 @@ export function verifyAuthentication(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res
-    .status(401)
-    .json({ status: false, message: 'Authentication missing or expired' });
+  res.status(401).json({ message: 'Authentication missing or expired' });
 }
 
 export function sendAuthStatus(req, res) {
-  if (req.user) {
-    res.status(200).json({
-      status: true,
-      message: `Valid authentication as user ${req.user.firstName} ${req.user.lastName}`,
-    });
+  if (req.isAuthenticated()) {
+    res
+      .status(200)
+      .json({
+        message: `Authenticated as user ${req.user.firstName} ${req.user.lastName}`,
+      });
+  } else {
+    res.status(401).json({ message: 'Authentication missing or expired' });
   }
 }
 
