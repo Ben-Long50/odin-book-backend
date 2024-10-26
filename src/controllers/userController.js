@@ -1,5 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
+import randomstring from 'randomstring';
 import userServices from '../services/userServices.js';
 import profileServices from '../services/profileServices.js';
 
@@ -76,7 +77,6 @@ const userController = {
             password: hashedPassword,
           };
           const newUser = await userServices.createUser(userData);
-          console.log(newUser);
 
           const defaultProfile = await profileServices.createOrUpdateProfile(
             {
@@ -94,6 +94,40 @@ const userController = {
       }
     },
   ],
+
+  createGuestUser: async (req, res, next) => {
+    try {
+      const uniqueIdentifier = randomstring.generate({
+        length: 8,
+        charset: 'numeric',
+      });
+
+      const hashedPassword = await bcrypt.hash(uniqueIdentifier, 10);
+      const guestData = {
+        firstName: 'Human',
+        lastName: uniqueIdentifier,
+        email: `Human${uniqueIdentifier}@pawprint.com`,
+        password: hashedPassword,
+      };
+      const newGuestUser = await userServices.createUser(guestData);
+      console.log(newGuestUser);
+
+      await profileServices.createOrUpdateProfile(
+        {
+          id: 'null',
+          username: `${newGuestUser.firstName}_${newGuestUser.lastName}`,
+          petName: 'Default',
+          active: true,
+        },
+        newGuestUser.id,
+      );
+      req.body.email = newGuestUser.email;
+      req.body.password = uniqueIdentifier;
+      next();
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
 
   authenticateUser: [
     body('email', 'Email does not exist')

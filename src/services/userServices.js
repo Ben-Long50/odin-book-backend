@@ -49,6 +49,23 @@ const userServices = {
       throw new Error('Failed to create user');
     }
   },
+
+  createGuestUser: async (guestData) => {
+    try {
+      const newUser = await prisma.user.create({
+        data: {
+          firstName: guestData.firstName,
+          lastName: guestData.lastName,
+          email: guestData.email,
+          password: guestData.password,
+          role: 'GUEST',
+        },
+      });
+      return newUser;
+    } catch (error) {
+      throw new Error('Failed to create user');
+    }
+  },
 };
 
 export default userServices;

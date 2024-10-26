@@ -5,24 +5,13 @@ import userController from '../controllers/userController.js';
 import {
   sendAuthStatus,
   signout,
+  signin,
   verifyAuthentication,
 } from '../passport/passport.js';
 
 const router = express.Router();
 
-router.post('/signin', userController.authenticateUser, (req, res) => {
-  passport.authenticate('local', (error, user) => {
-    if (error) {
-      res.status(401).json({ message: `Authentication error: ${error}` });
-    }
-    req.login(user, (error) => {
-      if (error) {
-        res.status(500).json({ message: `Login error: ${error}` });
-      }
-      res.status(200).json({ message: 'Login successful' });
-    });
-  })(req, res);
-});
+router.post('/signin', userController.authenticateUser, signin);
 
 router.post('/signout', signout);
 

@@ -30,15 +30,27 @@ export function verifyAuthentication(req, res, next) {
 
 export function sendAuthStatus(req, res) {
   if (req.isAuthenticated()) {
-    res
-      .status(200)
-      .json({
-        message: `Authenticated as user ${req.user.firstName} ${req.user.lastName}`,
-      });
+    res.status(200).json({
+      message: `Authenticated as user ${req.user.firstName} ${req.user.lastName}`,
+    });
   } else {
     res.status(401).json({ message: 'Authentication missing or expired' });
   }
 }
+
+export const signin = (req, res) => {
+  passport.authenticate('local', (error, user) => {
+    if (error) {
+      res.status(401).json({ message: `Authentication error: ${error}` });
+    }
+    req.login(user, (error) => {
+      if (error) {
+        res.status(500).json({ message: `Login error: ${error}` });
+      }
+      res.status(200).json({ message: 'Login successful' });
+    });
+  })(req, res);
+};
 
 export function signout(req, res) {
   req.logout((error) => {
