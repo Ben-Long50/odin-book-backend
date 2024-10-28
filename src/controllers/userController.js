@@ -141,6 +141,15 @@ const userController = {
     }
   },
 
+  deleteExpiredGuests: async () => {
+    try {
+      const result = await userServices.deleteExpiredGuests();
+      console.log(`Deleted ${result.count} expired guests`);
+    } catch (error) {
+      console.error(error.message);
+    }
+  },
+
   authenticateUser: [
     body('email', 'Email does not exist')
       .trim()

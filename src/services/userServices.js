@@ -43,6 +43,24 @@ const userServices = {
     }
   },
 
+  deleteExpiredGuests: async () => {
+    try {
+      const currentTime = new Date();
+      const cutoffTime = new Date(currentTime.getTime() - 60 * 60 * 1000 * 4);
+      const result = await prisma.user.deleteMany({
+        where: {
+          role: 'GUEST',
+          createdAt: {
+            lt: cutoffTime,
+          },
+        },
+      });
+      return result;
+    } catch (error) {
+      throw new Error('Failed to delete expired guests');
+    }
+  },
+
   createUser: async (userData) => {
     try {
       const newUser = await prisma.user.create({

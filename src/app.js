@@ -10,6 +10,7 @@ import session from 'express-session';
 import passport from 'passport';
 import connectPgSimple from 'connect-pg-simple';
 import pkg from 'pg';
+import cron from 'node-cron';
 import userRouter from './routes/userRoutes.js';
 import authRouter from './routes/authRoutes.js';
 import profileRouter from './routes/profileRoutes.js';
@@ -18,6 +19,7 @@ import postRouter from './routes/postRoutes.js';
 import commentRouter from './routes/commentRoutes.js';
 import notificationRouter from './routes/notificationRoutes.js';
 import './passport/passport.js';
+import userController from './controllers/userController.js';
 
 const app = express();
 
@@ -74,6 +76,11 @@ app.use('/', searchRouter);
 app.use('/', postRouter);
 app.use('/', commentRouter);
 app.use('/', notificationRouter);
+
+cron.schedule('0 * * * *', () => {
+  console.log('Running account cleanup...');
+  userController.deleteExpiredGuests();
+});
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
