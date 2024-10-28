@@ -21,14 +21,14 @@ localStrategy(passport);
 googleStrategy(passport);
 facebookStrategy(passport);
 
-export function verifyAuthentication(req, res, next) {
+export const verifyAuthentication = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
   res.status(401).json({ message: 'Authentication missing or expired' });
-}
+};
 
-export function sendAuthStatus(req, res) {
+export const sendAuthStatus = (req, res) => {
   if (req.isAuthenticated()) {
     res.status(200).json({
       message: `Authenticated as user ${req.user.firstName} ${req.user.lastName}`,
@@ -36,7 +36,7 @@ export function sendAuthStatus(req, res) {
   } else {
     res.status(401).json({ message: 'Authentication missing or expired' });
   }
-}
+};
 
 export const signin = (req, res) => {
   passport.authenticate('local', (error, user) => {
@@ -52,7 +52,10 @@ export const signin = (req, res) => {
   })(req, res);
 };
 
-export function signout(req, res) {
+export const signout = (req, res, next) => {
+  const userId = req.user ? req.user.id : null;
+  const userRole = req.user ? req.user.role : null;
+
   req.logout((error) => {
     if (error) {
       res.status(500).json({ message: `Logout error: ${error}` });
@@ -64,9 +67,14 @@ export function signout(req, res) {
           .json({ message: `Session destruction error: ${error}` });
       }
       res.clearCookie('connect.sid');
-      res.status(200).json({ message: 'Logout successful' });
+      if (userRole === 'USER') {
+        res.status(200).json({ message: 'Logout successful' });
+      } else if (userRole === 'GUEST') {
+        req.userId = userId;
+        next();
+      }
     });
   });
-}
+};
 
 export default passport;

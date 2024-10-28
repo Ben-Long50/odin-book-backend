@@ -109,8 +109,7 @@ const userController = {
         email: `Human${uniqueIdentifier}@pawprint.com`,
         password: hashedPassword,
       };
-      const newGuestUser = await userServices.createUser(guestData);
-      console.log(newGuestUser);
+      const newGuestUser = await userServices.createGuestUser(guestData);
 
       await profileServices.createOrUpdateProfile(
         {
@@ -124,6 +123,19 @@ const userController = {
       req.body.email = newGuestUser.email;
       req.body.password = uniqueIdentifier;
       next();
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  deleteUser: async (req, res) => {
+    try {
+      const userId = req.userId || req.user.id;
+      const user = await userServices.deleteUserById(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.status(200).json({ user, message: 'Successfully deleted user' });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

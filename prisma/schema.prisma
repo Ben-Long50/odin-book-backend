@@ -20,7 +20,7 @@ model User {
   facebookId String?   @unique
   email      String    @unique
   password   String?
-  role       UserRole  @default(USER)
+  role       UserRole
   createdAt  DateTime  @default(now())
   profiles   Profile[]
 }

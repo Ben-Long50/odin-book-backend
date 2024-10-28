@@ -13,7 +13,12 @@ const router = express.Router();
 
 router.post('/signin', userController.authenticateUser, signin);
 
-router.post('/signout', signout);
+router.post(
+  '/signout',
+  verifyAuthentication,
+  signout,
+  userController.deleteUser,
+);
 
 router.get('/auth/status', sendAuthStatus);
 

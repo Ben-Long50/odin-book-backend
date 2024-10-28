@@ -32,6 +32,17 @@ const userServices = {
     }
   },
 
+  deleteUserById: async (userId) => {
+    try {
+      const user = await prisma.user.delete({
+        where: { id: Number(userId) },
+      });
+      return user;
+    } catch (error) {
+      throw new Error('Failed to delete user');
+    }
+  },
+
   createUser: async (userData) => {
     try {
       const newUser = await prisma.user.create({
@@ -42,6 +53,7 @@ const userServices = {
           lastName: userData.lastName,
           email: userData.email,
           password: userData.password,
+          role: 'USER',
         },
       });
       return newUser;
