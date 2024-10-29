@@ -62,6 +62,23 @@ const notificationServices = {
     }
   },
 
+  createShareNotification: async (activeId, postId, shareList) => {
+    try {
+      const notifications = shareList.map((notifiedProfileId) => ({
+        postId: Number(postId),
+        profileId: Number(activeId),
+        notifiedProfileId: Number(notifiedProfileId),
+      }));
+
+      await prisma.notification.createMany({
+        data: notifications,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to send share notifications');
+    }
+  },
+
   deleteNotification: async (notificationId) => {
     try {
       await prisma.notification.delete({

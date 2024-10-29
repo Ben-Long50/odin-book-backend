@@ -4,6 +4,12 @@ import notificationController from '../controllers/notificationController.js';
 
 const router = express.Router();
 
+router.post(
+  '/notifications',
+  verifyAuthentication,
+  notificationController.createShareNotification,
+);
+
 router.delete(
   '/notifications/:id',
   verifyAuthentication,

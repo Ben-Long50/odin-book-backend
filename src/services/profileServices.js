@@ -326,6 +326,9 @@ const profileServices = {
               },
             },
           },
+          newPostShare: {
+            include: { likes: true, profile: true },
+          },
         },
         orderBy: {
           createdAt: 'desc',

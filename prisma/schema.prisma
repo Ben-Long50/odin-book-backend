@@ -62,16 +62,17 @@ model Follow {
 }
 
 model Post {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  mediaUrl  String
-  body      String?
-  published Boolean    @default(true)
-  comments  Comment[]
-  likes     PostLike[]
-  profile   Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId Int
-  Bookmark  Bookmark[]
+  id           Int            @id @default(autoincrement())
+  createdAt    DateTime       @default(now())
+  mediaUrl     String
+  body         String?
+  published    Boolean        @default(true)
+  comments     Comment[]
+  likes        PostLike[]
+  profile      Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId    Int
+  Bookmark     Bookmark[]
+  Notification Notification[] @relation("postShareNotification")
 }
 
 model Comment {
@@ -128,6 +129,7 @@ model Notification {
   commentId         Int?
   postLikeId        Int?
   commentLikeId     Int?
+  postId            Int?
   notifiedProfileId Int
   profileId         Int
 
@@ -135,6 +137,7 @@ model Notification {
   newComment     Comment?     @relation("commentNotification", fields: [commentId], references: [id], onDelete: Cascade)
   newPostLike    PostLike?    @relation("postLikeNotification", fields: [postLikeId], references: [id], onDelete: Cascade)
   newCommentLike CommentLike? @relation("commentLikeNotification", fields: [commentLikeId], references: [id], onDelete: Cascade)
+  newPostShare   Post?        @relation("postShareNotification", fields: [postId], references: [id], onDelete: Cascade)
 
   notifiedProfile Profile @relation("notifiedRelation", fields: [notifiedProfileId], references: [id], onDelete: Cascade)
   profile         Profile @relation("notifyingRelation", fields: [profileId], references: [id], onDelete: Cascade)
