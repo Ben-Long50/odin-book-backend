@@ -32,6 +32,34 @@ const userServices = {
     }
   },
 
+  editUser: async (formData, user) => {
+    try {
+      const updateData = {};
+
+      if (formData.firstName) {
+        updateData.firstName = formData.firstName;
+      }
+      if (formData.lastName) {
+        updateData.lastName = formData.lastName;
+      }
+      if (formData.email) {
+        updateData.email = formData.email;
+      }
+      if (formData.password) {
+        updateData.password = formData.password;
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: Number(user.id) },
+        data: updateData,
+      });
+
+      return updatedUser;
+    } catch (error) {
+      throw new Error('Failed to fetch user');
+    }
+  },
+
   deleteUserById: async (userId) => {
     try {
       const user = await prisma.user.delete({

@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import userController from '../controllers/userController.js';
-import { signin } from '../passport/passport.js';
+import { signin, verifyAuthentication } from '../passport/passport.js';
 
 const router = express.Router();
 
@@ -14,6 +14,10 @@ router.post(
   signin,
 );
 
-router.get('/users/:userId', cors(), userController.getUserById);
+router.get('/users', verifyAuthentication, userController.getUserById);
+
+router.put('/users', verifyAuthentication, userController.editUser);
+
+router.delete('/users', userController.deleteUser);
 
 export default router;
