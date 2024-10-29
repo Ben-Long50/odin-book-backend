@@ -4,13 +4,18 @@ import postServices from '../services/postServices.js';
 const postController = {
   getFollowedPosts: async (req, res) => {
     try {
-      const posts = await postServices.getFollowedPosts(req.params.id);
+      const page = Number(req.query.page);
+      const { posts, totalPosts, hasMore } =
+        await postServices.getFollowedPosts(req.params.id, page, 3);
       if (!posts) {
         return res.status(400).json({ message: 'No posts found' });
       }
-      res
-        .status(200)
-        .json({ posts, message: 'Successfully fetched feed posts' });
+      res.status(200).json({
+        posts,
+        totalPosts,
+        hasMore,
+        message: 'Successfully fetched feed posts',
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -27,13 +32,20 @@ const postController = {
 
   getExplorePosts: async (req, res) => {
     try {
-      const posts = await postServices.getExplorePosts(req.query.activeId);
+      const { posts, totalPosts, hasMore } = await postServices.getExplorePosts(
+        req.query.activeId,
+        req.query.page,
+        9,
+      );
       if (!posts) {
         return res.status(400).json({ message: 'No explore posts found' });
       }
-      res
-        .status(200)
-        .json({ posts, message: 'Successfully fetched explore posts' });
+      res.status(200).json({
+        posts,
+        totalPosts,
+        hasMore,
+        message: 'Successfully fetched explore posts',
+      });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

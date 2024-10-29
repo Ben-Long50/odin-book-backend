@@ -1,7 +1,7 @@
 import prisma from '../config/database.js';
 
 const postServices = {
-  getFollowedPosts: async (profileId) => {
+  getFollowedPosts: async (profileId, page, pageSize) => {
     try {
       const followedProfiles = await prisma.follow.findMany({
         where: { followerId: Number(profileId) },
@@ -20,9 +20,17 @@ const postServices = {
           likes: true,
           comments: true,
         },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
 
-      return posts;
+      const totalPosts = await prisma.post.count({
+        where: { profileId: { in: followedProfileIds } },
+      });
+
+      const hasMore = totalPosts > page * pageSize;
+
+      return { posts, totalPosts, hasMore };
     } catch (error) {
       console.error(error);
       throw new Error('Failed to get feed posts');
@@ -42,7 +50,7 @@ const postServices = {
     }
   },
 
-  getExplorePosts: async (activeId) => {
+  getExplorePosts: async (activeId, page, pageSize) => {
     try {
       const followedProfiles = await prisma.follow.findMany({
         where: { followerId: Number(activeId) },
@@ -72,9 +80,19 @@ const postServices = {
             },
           },
         },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
       });
 
-      return posts;
+      const totalPosts = await prisma.post.count({
+        where: {
+          profileId: { notIn: [...followedProfileIds, Number(activeId)] },
+        },
+      });
+
+      const hasMore = totalPosts > page * pageSize;
+
+      return { posts, totalPosts, hasMore };
     } catch (error) {
       console.error(error);
       throw new Error('Failed to get explore posts');

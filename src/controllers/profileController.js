@@ -34,6 +34,14 @@ const profileController = {
       .optional()
       .trim()
       .isLength({ max: 150 }),
+    body('species', 'Species can only be a maximum of 25 characters')
+      .optional()
+      .trim()
+      .isLength({ max: 25 }),
+    body('breed', 'Breed can only be a maximum of 25 characters')
+      .optional()
+      .trim()
+      .isLength({ max: 25 }),
     async (req, res) => {
       const errors = validationResult(req);
 
@@ -60,8 +68,6 @@ const profileController = {
 
   getActiveProfile: async (req, res) => {
     try {
-      console.log(req.user);
-
       const activeProfile = await profileServices.getActiveProfile(req.user.id);
       res.status(200).json({
         activeProfile,
