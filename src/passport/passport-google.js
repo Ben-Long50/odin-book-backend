@@ -1,6 +1,7 @@
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import userServices from '../services/userServices.js';
 import prisma from '../config/database.js';
+import profileServices from '../services/profileServices.js';
 
 const googleStrategy = (passport) => {
   passport.use(
@@ -34,6 +35,15 @@ const googleStrategy = (passport) => {
               email,
             };
             user = await userServices.createUser(userData);
+            await profileServices.createOrUpdateProfile(
+              {
+                id: 'null',
+                username: email,
+                petName: 'Default',
+                active: true,
+              },
+              user.id,
+            );
           }
           return done(null, user);
         } catch (err) {

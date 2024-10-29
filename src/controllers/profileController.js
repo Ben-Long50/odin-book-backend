@@ -20,19 +20,25 @@ const profileController = {
   createOrUpdateProfile: [
     upload.single('image'),
     uploadToCloudinary,
-    body('username', 'Username must be a minimum of 2 characters')
+    body('username', 'Username must be between 2 and 25 characters')
       .trim()
       .isLength({ min: 2 })
+      .isLength({ max: 25 })
       .escape(),
-    body('petName', 'Pet name must be a minimum of 2 characters')
+    body('petName', 'Pet name must be between 2 and 25 characters')
       .trim()
       .isLength({ min: 2 })
+      .isLength({ max: 25 })
       .escape(),
+    body('bio', 'Bio can only be a maximum of 150 characters')
+      .optional()
+      .trim()
+      .isLength({ max: 150 }),
     async (req, res) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
-        res.status(400).json(errors.array());
+        res.status(400).json({ errors: errors.array() });
       } else {
         try {
           req.body.active = false;
@@ -54,8 +60,10 @@ const profileController = {
 
   getActiveProfile: async (req, res) => {
     try {
+      console.log(req.user);
+
       const activeProfile = await profileServices.getActiveProfile(req.user.id);
-      res.json({
+      res.status(200).json({
         activeProfile,
         message: 'Successfully fetched active profile',
       });

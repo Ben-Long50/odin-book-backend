@@ -54,7 +54,7 @@ const profileServices = {
   getActiveProfile: async (userId) => {
     try {
       return await prisma.profile.findFirst({
-        where: { userId, active: true },
+        where: { userId: Number(userId), active: true },
         include: {
           followers: {
             select: {
