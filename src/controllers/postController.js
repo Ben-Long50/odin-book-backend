@@ -1,5 +1,6 @@
 import notificationServices from '../services/notificationServices.js';
 import postServices from '../services/postServices.js';
+import { deleteFromCloudinary } from '../utils/cloudinary.js';
 
 const postController = {
   getFollowedPosts: async (req, res) => {
@@ -23,7 +24,9 @@ const postController = {
 
   deletePost: async (req, res) => {
     try {
+      const post = await postServices.getPostById(req.params.id);
       await postServices.deletePost(req.params.id);
+      await deleteFromCloudinary(post.mediaUploadId);
       res.status(200).json({ message: 'Successfully deleted post' });
     } catch (error) {
       res.status(500).json({ error: error.message });

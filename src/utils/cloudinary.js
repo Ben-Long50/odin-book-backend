@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs';
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -10,10 +11,17 @@ cloudinary.config({
 export const uploadToCloudinary = async (req, res, next) => {
   if (req.file) {
     try {
-      const result = await cloudinary.uploader.upload(req.file.path);
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: '/pawprint',
+      });
+
+      fs.unlink(req.file.path, (error) => {
+        if (error) console.error('Error deleting temp file:', error);
+      });
+      req.body.publicId = result.public_id;
       req.body.imageURL = result.secure_url;
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       res.status(500).json({
         success: false,
         message: 'Error uploading to Cloudinary',
@@ -21,6 +29,18 @@ export const uploadToCloudinary = async (req, res, next) => {
     }
   }
   next();
+};
+
+export const deleteFromCloudinary = (publicId) => {
+  try {
+    const result = cloudinary.uploader.destroy(publicId);
+    if (result.result === 'ok') {
+      return result;
+    }
+    throw new Error('Error deleting image');
+  } catch (error) {
+    console.error(error.message);
+  }
 };
 
 export default cloudinary;

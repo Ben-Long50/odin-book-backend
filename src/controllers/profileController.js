@@ -1,7 +1,10 @@
 import { body, validationResult } from 'express-validator';
 import profileServices from '../services/profileServices.js';
 import upload from '../utils/multer.js';
-import { uploadToCloudinary } from '../utils/cloudinary.js';
+import {
+  deleteFromCloudinary,
+  uploadToCloudinary,
+} from '../utils/cloudinary.js';
 import notificationServices from '../services/notificationServices.js';
 
 const profileController = {
@@ -95,7 +98,11 @@ const profileController = {
 
   deleteProfile: async (req, res) => {
     try {
+      const profile = await profileServices.getProfile(req.params.id);
       await profileServices.deleteProfile(req.params.id);
+      if (profile.profilePicUploadId) {
+        await deleteFromCloudinary(profile.profilePicUploadId);
+      }
       res.status(200).json({ message: 'Successfully deleted profile' });
     } catch (error) {
       res.status(500).json({ message: error.message });

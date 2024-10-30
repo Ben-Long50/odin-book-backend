@@ -1,4 +1,5 @@
 import prisma from '../config/database.js';
+import { deleteFromCloudinary } from '../utils/cloudinary.js';
 
 const profileServices = {
   getProfiles: async (userId) => {
@@ -17,14 +18,24 @@ const profileServices = {
 
   createOrUpdateProfile: async (profileData, userId) => {
     try {
-      const { id, imageURL, username, petName, bio, species, breed, active } =
-        profileData;
+      const {
+        id,
+        imageURL,
+        publicId,
+        username,
+        petName,
+        bio,
+        species,
+        breed,
+        active,
+      } = profileData;
 
       if (id !== 'null') {
         return await prisma.profile.update({
           where: { id: Number(id) },
           data: {
             profilePicUrl: imageURL,
+            profilePicUploadId: publicId,
             username,
             petName,
             bio,
@@ -37,6 +48,7 @@ const profileServices = {
         data: {
           username,
           profilePicUrl: imageURL,
+          profilePicUploadId: publicId,
           petName,
           bio,
           species,
@@ -104,6 +116,20 @@ const profileServices = {
 
   deleteProfile: async (profileId) => {
     try {
+      const posts = await prisma.post.findMany({
+        where: { profileId: Number(profileId) },
+        select: { mediaUploadId: true },
+      });
+      const postPublicIds = posts.map((post) => post.mediaUploadId);
+
+      await Promise.all(
+        postPublicIds.map((id) => {
+          if (id) {
+            return deleteFromCloudinary(id);
+          }
+        }),
+      );
+
       await prisma.profile.delete({
         where: { id: Number(profileId) },
       });
@@ -211,10 +237,11 @@ const profileServices = {
 
   createPost: async (postData, profileId) => {
     try {
-      const { imageURL, caption } = postData;
+      const { imageURL, publicId, caption } = postData;
       const post = await prisma.post.create({
         data: {
           mediaUrl: imageURL,
+          mediaUploadId: publicId,
           body: caption,
           profileId: Number(profileId),
         },

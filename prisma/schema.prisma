@@ -26,28 +26,29 @@ model User {
 }
 
 model Profile {
-  id               Int            @id @default(autoincrement())
-  username         String         @unique
-  petName          String
-  species          String?
-  breed            String?
-  bio              String?
-  profilePicUrl    String?
-  birthday         DateTime?
-  active           Boolean
-  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId           Int
-  posts            Post[]
-  comments         Comment[]
-  postLikes        PostLike[]
-  commentLikes     CommentLike[]
-  followers        Follow[]       @relation("followerRelation")
-  following        Follow[]       @relation("followingRelation")
-  personalSearches Search[]       @relation("searchingRelation")
-  foreignSearches  Search[]       @relation("searchedRelation")
-  notified         Notification[] @relation("notifiedRelation")
-  notifying        Notification[] @relation("notifyingRelation")
-  bookmarks        Bookmark[]
+  id                 Int            @id @default(autoincrement())
+  username           String         @unique
+  petName            String
+  species            String?
+  breed              String?
+  bio                String?
+  profilePicUrl      String?
+  profilePicUploadId String?
+  birthday           DateTime?
+  active             Boolean
+  user               User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             Int
+  posts              Post[]
+  comments           Comment[]
+  postLikes          PostLike[]
+  commentLikes       CommentLike[]
+  followers          Follow[]       @relation("followerRelation")
+  following          Follow[]       @relation("followingRelation")
+  personalSearches   Search[]       @relation("searchingRelation")
+  foreignSearches    Search[]       @relation("searchedRelation")
+  notified           Notification[] @relation("notifiedRelation")
+  notifying          Notification[] @relation("notifyingRelation")
+  bookmarks          Bookmark[]
 }
 
 model Follow {
@@ -62,17 +63,18 @@ model Follow {
 }
 
 model Post {
-  id           Int            @id @default(autoincrement())
-  createdAt    DateTime       @default(now())
-  mediaUrl     String
-  body         String?
-  published    Boolean        @default(true)
-  comments     Comment[]
-  likes        PostLike[]
-  profile      Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  profileId    Int
-  Bookmark     Bookmark[]
-  Notification Notification[] @relation("postShareNotification")
+  id            Int            @id @default(autoincrement())
+  createdAt     DateTime       @default(now())
+  mediaUrl      String
+  mediaUploadId String?
+  body          String?
+  published     Boolean        @default(true)
+  comments      Comment[]
+  likes         PostLike[]
+  profile       Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profileId     Int
+  Bookmark      Bookmark[]
+  Notification  Notification[] @relation("postShareNotification")
 }
 
 model Comment {

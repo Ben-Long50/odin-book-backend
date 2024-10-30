@@ -1,6 +1,17 @@
 import prisma from '../config/database.js';
 
 const postServices = {
+  getPostById: async (postId) => {
+    try {
+      const post = await prisma.post.findUnique({
+        where: { id: Number(postId) },
+      });
+      return post;
+    } catch (error) {
+      throw new Error(`Failed to find post: ${error.message}`);
+    }
+  },
+
   getFollowedPosts: async (profileId, page, pageSize) => {
     try {
       const followedProfiles = await prisma.follow.findMany({

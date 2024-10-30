@@ -1,4 +1,5 @@
 import prisma from '../config/database.js';
+import { deleteFromCloudinary } from '../utils/cloudinary.js';
 
 const userServices = {
   getAllUsers: async () => {
@@ -62,9 +63,47 @@ const userServices = {
 
   deleteUserById: async (userId) => {
     try {
+      const profiles = await prisma.profile.findMany({
+        where: { userId: Number(userId) },
+        select: { id: true, profilePicUploadId: true },
+      });
+
+      const profileIds = profiles.map((profile) => profile.id);
+
+      const postPublicIdFields = await Promise.all(
+        profileIds.map((id) =>
+          prisma.post.findMany({
+            where: { profileId: id },
+            select: { mediaUploadId: true },
+          }),
+        ),
+      );
+
+      const postPublicIds = postPublicIdFields.map((array) => {
+        if (array[0]) {
+          return array[0].mediaUploadId;
+        }
+        return null;
+      });
+
+      const profilePublicIds = profiles.map(
+        (profile) => profile.profilePicUploadId,
+      );
+
+      const allPublicIds = profilePublicIds.concat(postPublicIds);
+
+      await Promise.all(
+        allPublicIds.map((id) => {
+          if (id) {
+            return deleteFromCloudinary(id);
+          }
+        }),
+      );
+
       const user = await prisma.user.delete({
         where: { id: Number(userId) },
       });
+
       return user;
     } catch (error) {
       throw new Error('Failed to delete user');
@@ -75,15 +114,27 @@ const userServices = {
     try {
       const currentTime = new Date();
       const cutoffTime = new Date(currentTime.getTime() - 60 * 60 * 1000 * 4);
-      const result = await prisma.user.deleteMany({
+      const expiredGuests = await prisma.user.findMany({
         where: {
           role: 'GUEST',
           createdAt: {
             lt: cutoffTime,
           },
         },
+        select: {
+          id: true,
+        },
       });
-      return result;
+
+      const expiredGuestIds = expiredGuests.map((guest) => guest.id);
+
+      await Promise.all(
+        expiredGuestIds.map((id) => {
+          if (id) {
+            return this.deleteUserById(id);
+          }
+        }),
+      );
     } catch (error) {
       throw new Error('Failed to delete expired guests');
     }

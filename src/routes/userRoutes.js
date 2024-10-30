@@ -17,6 +17,6 @@ router.get('/users', verifyAuthentication, userController.getUserById);
 
 router.put('/users', verifyAuthentication, userController.editUser);
 
-router.delete('/users', userController.deleteUser);
+router.delete('/users', verifyAuthentication, userController.deleteUser);
 
 export default router;
