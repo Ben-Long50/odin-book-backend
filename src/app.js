@@ -41,7 +41,7 @@ const sess = {
 
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1);
-  sess.cookie.secure = true;
+  sess.cookie.secure = process.env.NODE_ENV === 'production';
 }
 
 app.use(session(sess));
