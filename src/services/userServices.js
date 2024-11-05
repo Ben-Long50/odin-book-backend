@@ -114,27 +114,15 @@ const userServices = {
     try {
       const currentTime = new Date();
       const cutoffTime = new Date(currentTime.getTime() - 60 * 60 * 1000 * 4);
-      const expiredGuests = await prisma.user.findMany({
+      const expiredGuests = await prisma.user.deleteMany({
         where: {
           role: 'GUEST',
           createdAt: {
             lt: cutoffTime,
           },
         },
-        select: {
-          id: true,
-        },
       });
-
-      const expiredGuestIds = expiredGuests.map((guest) => guest.id);
-
-      await Promise.all(
-        expiredGuestIds.map((id) => {
-          if (id) {
-            return this.deleteUserById(id);
-          }
-        }),
-      );
+      return expiredGuests;
     } catch (error) {
       throw new Error('Failed to delete expired guests');
     }
