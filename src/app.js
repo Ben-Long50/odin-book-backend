@@ -56,12 +56,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 
-// const limiter = rateLimit({
-//   windowMs: 2 * 60 * 1000,
-//   max: 100,
-// });
+const limiter = rateLimit({
+  windowMs: 2 * 60 * 1000,
+  max: 100,
+});
 
-// app.use(limiter);
+app.use(limiter);
 app.use(
   cors({
     origin: ['http://localhost:5173', 'http://192.168.4.94:5173'],
