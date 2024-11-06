@@ -23,11 +23,16 @@ import userController from './controllers/userController.js';
 
 const app = express();
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const { Pool } = pkg;
 const pgPool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
+
 const PgSession = connectPgSimple(session);
+
 const sess = {
   secret: process.env.SECRET_KEY,
   resave: false,
@@ -43,16 +48,26 @@ const sess = {
   },
 };
 
-if (app.get('env') === 'production') {
+const limiter = rateLimit({
+  windowMs: 2 * 60 * 1000,
+  max: 100,
+});
+
+if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
-  sess.cookie.secure = true;
 }
+
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    credentials: true,
+  }),
+);
 
 app.use(session(sess));
 app.use(passport.session());
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -60,20 +75,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(helmet());
 
-const limiter = rateLimit({
-  windowMs: 2 * 60 * 1000,
-  max: 100,
-});
-
 app.use(limiter);
-app.use(
-  cors({
-    origin: process.env.CLIENT_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type'],
-    credentials: true,
-  }),
-);
 
 app.use('/', userRouter);
 app.use('/', authRouter);
@@ -100,12 +102,12 @@ app.use((err, req, res, next) => {
   }
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = process.env.NODE_ENV === 'development' ? err : {};
 
   // Send JSON error response
   res.status(err.status || 500).json({
     message: err.message,
-    error: req.app.get('env') === 'development' ? err : {},
+    error: process.env.NODE_ENV === 'development' ? err : {},
   });
 });
 
