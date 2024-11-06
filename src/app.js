@@ -36,7 +36,11 @@ const sess = {
     pool: pgPool,
     tableName: 'session',
   }),
-  cookie: { maxAge: 4 * 60 * 60 * 1000, secure: false },
+  cookie: {
+    maxAge: 4 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+  },
 };
 
 if (app.get('env') === 'production') {
