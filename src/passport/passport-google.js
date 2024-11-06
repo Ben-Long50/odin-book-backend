@@ -9,7 +9,7 @@ const googleStrategy = (passport) => {
       {
         clientID: process.env.GOOGLE_ID,
         clientSecret: process.env.GOOGLE_SECRET,
-        callbackURL: 'http://localhost:3000/auth/google/callback',
+        callbackURL: 'https://pawprint-api.onrender.com/auth/google/callback',
         scope: ['profile', 'email'],
         state: true,
       },
