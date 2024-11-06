@@ -41,13 +41,23 @@ export const sendAuthStatus = (req, res) => {
 export const signin = (req, res) => {
   passport.authenticate('local', (error, user) => {
     if (error) {
-      res.status(401).json({ message: `Authentication error: ${error}` });
+      return res
+        .status(401)
+        .json({ message: `Authentication error: ${error.message}` });
     }
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
     req.login(user, (error) => {
       if (error) {
-        res.status(500).json({ message: `Login error: ${error}` });
+        return res
+          .status(500)
+          .json({ message: `Login error: ${error.message}` });
       }
-      res.status(200).json({ message: 'Login successful' });
+
+      return res.status(200).json({ message: 'Login successful' });
     });
   })(req, res);
 };
