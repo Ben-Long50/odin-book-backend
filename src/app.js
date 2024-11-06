@@ -41,7 +41,7 @@ const sess = {
 
 if (app.get('env') === 'production') {
   app.set('trust proxy', 1);
-  sess.cookie.secure = process.env.NODE_ENV === 'production';
+  sess.cookie.secure = true;
 }
 
 app.use(session(sess));
@@ -64,7 +64,9 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL],
+    origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
     credentials: true,
   }),
 );
