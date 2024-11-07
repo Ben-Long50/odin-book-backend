@@ -9,7 +9,7 @@ const facebookStrategy = (passport) => {
       {
         clientID: process.env.FACEBOOK_ID,
         clientSecret: process.env.FACEBOOK_SECRET,
-        callbackURL: 'https://api.pawprint-social.com/auth/facebook/callback',
+        callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
         profileFields: ['id', 'emails', 'name'],
         scope: ['email'],
       },

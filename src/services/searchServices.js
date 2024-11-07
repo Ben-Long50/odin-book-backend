@@ -22,6 +22,22 @@ const searchServices = {
     }
   },
 
+  getSearch: async (activeId, searchedId) => {
+    try {
+      const search = await prisma.search.findUnique({
+        where: {
+          searchId: {
+            profileId: Number(activeId),
+            searchedProfileId: Number(searchedId),
+          },
+        },
+      });
+      return search;
+    } catch (error) {
+      throw new Error('Failed to delete search history');
+    }
+  },
+
   getSearches: async (activeId) => {
     try {
       const searches = await prisma.search.findMany({

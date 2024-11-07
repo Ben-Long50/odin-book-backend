@@ -29,6 +29,17 @@ const searchController = {
 
   createSearch: async (req, res) => {
     try {
+      const existingSearch = await searchServices.getSearch(
+        req.body.activeId,
+        req.params.id,
+      );
+      if (existingSearch) {
+        console.log(existingSearch);
+
+        return res
+          .status(200)
+          .json({ search: existingSearch, message: 'Search already exists' });
+      }
       const search = await searchServices.createSearch(
         req.params.id,
         req.body.activeId,
