@@ -11,6 +11,10 @@ import {
 
 const router = express.Router();
 
+router.get('/status', (req, res) =>
+  res.status(200).json({ message: 'Service is running' }),
+);
+
 router.post('/signin', userController.authenticateUser, signin);
 
 router.post(
