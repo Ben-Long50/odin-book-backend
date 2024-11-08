@@ -13,6 +13,8 @@ export const uploadToCloudinary = async (req, res, next) => {
     try {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: '/pawprint',
+        quality: 'auto',
+        fetch_format: 'auto',
       });
 
       fs.unlink(req.file.path, (error) => {
