@@ -1,5 +1,8 @@
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -14,7 +17,6 @@ export const uploadToCloudinary = async (req, res, next) => {
       const result = await cloudinary.uploader.upload(req.file.path, {
         folder: '/pawprint',
         quality: 'auto:eco',
-        fetch_format: 'auto',
       });
 
       fs.unlink(req.file.path, (error) => {

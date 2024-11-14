@@ -83,10 +83,13 @@ const userController = {
           };
           const newUser = await userServices.createUser(userData);
 
+          const splitEmail = newUser.email.split('@');
+          const defaultUsername = splitEmail[0];
+
           const defaultProfile = await profileServices.createOrUpdateProfile(
             {
               id: 'null',
-              username: newUser.email,
+              username: defaultUsername,
               petName: 'Default',
               active: true,
             },
