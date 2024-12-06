@@ -187,7 +187,7 @@ To access the live version of this project and explore all of it's features, use
    Open a second terminal and create a new database in psql. Connect to it:
    ```sh
    psql
-   CREATE DATABASE <your_database_name>
+   CREATE DATABASE <your_database_name>;
    \c <your_database_name>
    ```
    Return to the first terminal where you are located in the pawprint-backend directory and migrate the database schema:
