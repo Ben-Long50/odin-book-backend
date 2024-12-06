@@ -33,22 +33,6 @@ const pgPool = new Pool({
 
 const PgSession = connectPgSimple(session);
 
-const sess = {
-  secret: process.env.SECRET_KEY,
-  resave: false,
-  saveUninitialized: false,
-  store: new PgSession({
-    pool: pgPool,
-    tableName: 'session',
-  }),
-  cookie: {
-    maxAge: 4 * 60 * 60 * 1000,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' && 'none',
-    httpOnly: true,
-  },
-};
-
 const limiter = rateLimit({
   windowMs: 2 * 60 * 1000,
   max: 100,
@@ -66,6 +50,22 @@ app.use(
     credentials: true,
   }),
 );
+
+const sess = {
+  secret: process.env.SECRET_KEY,
+  resave: false,
+  saveUninitialized: false,
+  store: new PgSession({
+    pool: pgPool,
+    tableName: 'session',
+  }),
+  cookie: {
+    maxAge: 4 * 60 * 60 * 1000,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' && 'none',
+    httpOnly: true,
+  },
+};
 
 app.use(session(sess));
 app.use(passport.session());

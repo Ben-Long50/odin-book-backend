@@ -10,7 +10,7 @@
 <h1 align="center">Pawprint API</h1>
 
   <p align="center">
-    The backend API which powers my Pawprint social media website
+    The backend API which powers the Pawprint social media website
     <br />
     <a href="https://github.com/Ben-Long50/pawprint-backend.git"><strong>Explore the docs »</strong></a>
     <br />
@@ -75,15 +75,15 @@
 
 #### Authentication Endpoints
 
-| Method | Endpoint             | Description                                                     |
-| ------ | -------------------- | --------------------------------------------------------------- |
-| GET    | `/auth/google`       | Signs a user in using Google OAuth and returns a session cookie |
-| GET    | `/auth/facebook`     | Signs a user in using Facebook and returns a session cookie     |
-| GET    | `/auth/status`       | Returns a boolean reflecting current auth status                |
-| POST   | `/auth/signin`       | Signs a user in an returns a session cookie                     |
-| POST   | `/auth/signout`      | Signs a user out and deleted their session and session cookie   |
-| POST   | `/auth/signup`       | Registers a new user locally                                    |
-| POST   | `/auth/signin/guest` | Signs in a user after creating a temporary guest account        |
+| Method | Endpoint             | Description                                                            |
+| ------ | -------------------- | ---------------------------------------------------------------------- |
+| GET    | `/auth/google`       | Signs a user in using Google OAuth and returns a session cookie        |
+| GET    | `/auth/facebook`     | Signs a user in using Facebook and returns a session cookie            |
+| GET    | `/auth/status`       | Returns a boolean reflecting current auth status                       |
+| POST   | `/auth/signin`       | Signs a user in locally an returns a session cookie                    |
+| POST   | `/auth/signout`      | Signs a user out and deletes their database session and session cookie |
+| POST   | `/auth/signup`       | Registers a new user locally                                           |
+| POST   | `/auth/signin/guest` | Signs in a user after creating a temporary guest account               |
 
 #### User Endpoints
 
