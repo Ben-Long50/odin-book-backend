@@ -31,7 +31,7 @@
       <a href="#about-the-project">About The Project</a>
       <ul>
         <li><a href="#built-with">Built With</a></li>
-        <li><a href="#features">Features</a></li>
+        <li><a href="#api-endpoints">API Endpoints</a></li>
       </ul>
     </li>
     <li>
@@ -205,7 +205,9 @@ To access the live version of this project and explore all of it's features, use
    </a>  
    Find the cloud name, api key and api secret associated with your account. They will be used as env variables in the next section
 5. **Set up environment variables**  
-    Create a .env file in the project’s base directory and add the following environment variables:
+    Create a .env file in the project’s base directory and add the following environment variables:  
+    (The SECRET_KEY can be anything you choose)
+
    ```js
    CLIENT_URL = 'http://localhost:5173';
    API_URL = 'http://localhost:3000';
@@ -221,8 +223,10 @@ To access the live version of this project and explore all of it's features, use
    GOOGLE_ID = '<your_google_developer_id>';
    NODE_ENV = 'development';
    ```
+
    > [!NOTE]
    > For the scope of this install tutorial, we will not cover setting up the facebook and google auth options. Use the local auth option for testing
+
 6. **Avoid accidental pushes to the original repository**  
    If you plan to make changes, update the Git remote to point to your own fork to prevent accidental pushes to the base repository:
 
