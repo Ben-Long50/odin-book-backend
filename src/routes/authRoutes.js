@@ -15,10 +15,19 @@ router.get('/status', (req, res) =>
   res.status(200).json({ message: 'Service is running' }),
 );
 
-router.post('/signin', userController.authenticateUser, signin);
+router.post('/auth/signup', userController.createUser);
+
+router.post('/auth/signin', userController.authenticateUser, signin);
 
 router.post(
-  '/signout',
+  '/auth/signin/guest',
+  userController.createGuestUser,
+  userController.authenticateUser,
+  signin,
+);
+
+router.post(
+  '/auth/signout',
   verifyAuthentication,
   signout,
   userController.deleteUser,

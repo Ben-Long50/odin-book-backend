@@ -1,67 +1,52 @@
 import express from 'express';
 import profileController from '../controllers/profileController.js';
 import { verifyAuthentication } from '../passport/passport.js';
+import searchController from '../controllers/searchController.js';
 
 const router = express.Router();
-
-router.post(
-  '/profile',
-  verifyAuthentication,
-  profileController.createOrUpdateProfile,
-);
 
 router.get('/profiles', verifyAuthentication, profileController.getProfiles);
 
 router.get(
-  '/profile',
+  '/profiles/active',
   verifyAuthentication,
   profileController.getActiveProfile,
 );
 
-router.put(
-  '/profiles/:profileId',
-  verifyAuthentication,
-  profileController.setActiveProfile,
-);
+router.get('/profiles/:id', profileController.getProfile);
 
-router.get('/profile/:id', profileController.getProfile);
-
-router.delete(
-  '/profile/:id',
-  verifyAuthentication,
-  profileController.deleteProfile,
-);
-
-router.get(
-  '/profile/:activeId/follows/:profileId',
-  verifyAuthentication,
-  profileController.getFollowStatus,
-);
-
-router.post(
-  '/profile/:id/follow',
-  verifyAuthentication,
-  profileController.followProfile,
-);
-
-router.delete(
-  '/profile/:id/follow',
-  verifyAuthentication,
-  profileController.unfollowProfile,
-);
-
-router.get('/profile/:id/posts', profileController.getPosts);
-
-router.post(
-  '/profile/:id/post',
-  verifyAuthentication,
-  profileController.createPost,
-);
+router.get('/profiles/:id/posts', profileController.getPosts);
 
 router.get(
   '/profiles/:profileId/bookmarks',
   verifyAuthentication,
   profileController.getBookmarks,
+);
+
+router.get(
+  '/profiles/:profileId/notifications',
+  verifyAuthentication,
+  profileController.getNotifications,
+);
+
+router.get('/profiles/:id/searches', searchController.getSearches);
+
+router.get(
+  '/profiles/:activeId/follows/:profileId',
+  verifyAuthentication,
+  profileController.getFollowStatus,
+);
+
+router.post(
+  '/profiles',
+  verifyAuthentication,
+  profileController.createOrUpdateProfile,
+);
+
+router.post(
+  '/profiles/:id/follows',
+  verifyAuthentication,
+  profileController.followProfile,
 );
 
 router.post(
@@ -70,22 +55,28 @@ router.post(
   profileController.createBookmark,
 );
 
+router.put(
+  '/profiles/:profileId',
+  verifyAuthentication,
+  profileController.setActiveProfile,
+);
+
+router.delete(
+  '/profiles/:id',
+  verifyAuthentication,
+  profileController.deleteProfile,
+);
+
+router.delete(
+  '/profiles/:id/follows',
+  verifyAuthentication,
+  profileController.unfollowProfile,
+);
+
 router.delete(
   '/profiles/:profileId/bookmarks/:postId',
   verifyAuthentication,
   profileController.deleteBookmark,
-);
-
-router.delete(
-  '/profiles/:profileId/bookmarks',
-  verifyAuthentication,
-  profileController.deleteAllBookmarks,
-);
-
-router.get(
-  '/profiles/:profileId/notifications',
-  verifyAuthentication,
-  profileController.getNotifications,
 );
 
 export default router;

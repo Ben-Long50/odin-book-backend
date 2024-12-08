@@ -235,15 +235,15 @@ const profileServices = {
     }
   },
 
-  createPost: async (postData, profileId) => {
+  createPost: async (postData) => {
     try {
-      const { imageURL, publicId, caption } = postData;
+      const { imageURL, publicId, caption, author } = postData;
       const post = await prisma.post.create({
         data: {
           mediaUrl: imageURL,
           mediaUploadId: publicId,
           body: caption,
-          profileId: Number(profileId),
+          profileId: Number(author),
         },
       });
       return post;

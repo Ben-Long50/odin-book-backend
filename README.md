@@ -108,29 +108,30 @@
 | POST   | `/profiles`                              | Creates a new profile                                              |
 | POST   | `/profiles/:profileId/follows`           | Follows a specific profile with the current users active profile   |
 | POST   | `/profiles/:profileId/bookmarks`         | Creates a new bookmark on the active profile                       |
+| PUT    | `/profiles/:profileId`                   | Changes the currently authenticated user's active profile          |
 | DELETE | `/profiles/:profileId`                   | Deletes a specific profile                                         |
 | DELETE | `/profiles/:profileId/follows`           | Unfollows a specific profile with the current users active profile |
 | DELETE | `/profiles/:profileId/bookmarks/:postId` | Deletes a bookmark corresponding to a specific post                |
 
 #### Post Endpoints
 
-| Method | Endpoint                             | Description                                       |
-| ------ | ------------------------------------ | ------------------------------------------------- |
-| GET    | `/posts`                             | Fetches the most recent posts of followed users   |
-| GET    | `/posts/explore`                     | Fetches the most recent posts of unfollowed users |
-| GET    | `/posts/:postId/comments`            | Fetches a specific posts comments                 |
-| POST   | `/posts`                             | Creates a new post                                |
-| POST   | `/posts/:postId/likes`               | Likes a specific post                             |
-| POST   | `/posts/:postId/comments`            | Comments on a specific post                       |
-| DELETE | `/posts/:postId`                     | Deletes a specific post.                          |
-| DELETE | `/posts/:postId/likes`               | Removes the current users like on a specific post |
-| DELETE | `/posts/:postId/comments/:commentId` | Deletes a specific comment on a post              |
+| Method | Endpoint                  | Description                                       |
+| ------ | ------------------------- | ------------------------------------------------- |
+| GET    | `/posts`                  | Fetches the most recent posts of followed users   |
+| GET    | `/posts/explore`          | Fetches the most recent posts of unfollowed users |
+| GET    | `/posts/:postId/comments` | Fetches a specific posts comments                 |
+| POST   | `/posts`                  | Creates a new post                                |
+| POST   | `/posts/:postId/likes`    | Likes a specific post                             |
+| POST   | `/posts/:postId/comments` | Comments on a specific post                       |
+| DELETE | `/posts/:postId`          | Deletes a specific post.                          |
+| DELETE | `/posts/:postId/likes`    | Removes the current users like on a specific post |
 
 #### Comment Endpoints
 
 | Method | Endpoint                     | Description                                          |
 | ------ | ---------------------------- | ---------------------------------------------------- |
 | POST   | `/comments/:commentId/likes` | Likes a specific comment                             |
+| DELETE | `/comments/:commentId`       | Deletes a specific comment                           |
 | DELETE | `/comments/:commentId/likes` | Removes the current users like on a specific comment |
 
 #### Notification Endpoints
@@ -146,7 +147,7 @@
 | Method | Endpoint               | Description                                                                                   |
 | ------ | ---------------------- | --------------------------------------------------------------------------------------------- |
 | GET    | `/search/:searchQuery` | Returns a list of profiles matching the requested query string                                |
-| GET    | `/search/:profileId`   | Creates a search history entry for the searched profile on the users currently active profile |
+| POST   | `/search/:profileId`   | Creates a search history entry for the searched profile on the users currently active profile |
 | DELETE | `/search/:profileId`   | Deletes a search history entry pertaining to a specific profile                               |
 | DELETE | `/search`              | Deletes all search history entries                                                            |
 

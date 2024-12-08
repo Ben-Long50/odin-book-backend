@@ -11,15 +11,15 @@ router.post(
 );
 
 router.delete(
-  '/notifications/:id',
-  verifyAuthentication,
-  notificationController.deleteNotification,
-);
-
-router.delete(
   '/notifications',
   verifyAuthentication,
   notificationController.deleteAllNotifications,
+);
+
+router.delete(
+  '/notifications/:id',
+  verifyAuthentication,
+  notificationController.deleteNotification,
 );
 
 export default router;

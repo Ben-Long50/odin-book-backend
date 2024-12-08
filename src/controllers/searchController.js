@@ -66,7 +66,7 @@ const searchController = {
 
   deleteAllSearches: async (req, res) => {
     try {
-      await searchServices.deleteAllSearches(req.params.id);
+      await searchServices.deleteAllSearches(req.body.activeId);
       res.status(200).json({
         message: 'Successfully deleted search history',
       });
