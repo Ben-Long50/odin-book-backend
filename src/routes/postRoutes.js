@@ -6,9 +6,9 @@ import commentController from '../controllers/commentController.js';
 
 const router = express.Router();
 
-router.get('/posts/:id', verifyAuthentication, postController.getFollowedPosts);
-
 router.get('/posts/explore', postController.getExplorePosts);
+
+router.get('/posts/:id', verifyAuthentication, postController.getFollowedPosts);
 
 router.get('/posts/:postId/comments', commentController.getComments);
 
