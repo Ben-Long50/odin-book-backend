@@ -173,40 +173,57 @@ To access the live version of this project and explore all of it's features, use
 
 ### Installation
 
-1. **Clone the repository**  
+1. **Clone the repository**
+
    Run the following command to clone the repository:
+
    ```sh
    git clone https://github.com/Ben-Long50/pawprint-backend.git
    ```
-2. **Navigate to the project directory and install dependencies**  
+
+2. **Navigate to the project directory and install dependencies**
+
    Move into the project directory and install the required npm packages:
+
    ```sh
    cd pawprint-backend
    npm install
    ```
-3. **Set up a local development database for the project**  
+
+3. **Set up a local development database for the project**
+
    Open a second terminal and create a new database in psql. Connect to it:
+
    ```sh
    psql
    CREATE DATABASE <your_database_name>;
    \c <your_database_name>
    ```
+
    Return to the first terminal where you are located in the pawprint-backend directory and migrate the database schema:
+
    ```sh
    npx prisma generate
    npx prisma migrate dev
    ```
+
    In the psql terminal, check that the schema has been successfully migrated over to the development db:
+
    ```sh
    \d
    ```
-4. **Set up an account on Cloudinary**  
+
+4. **Set up an account on Cloudinary**
+
    <a href="https://www.cloudinary.com/">
    <strong>Cloudinary »</strong>
-   </a>  
+   </a>
+
    Find the cloud name, api key and api secret associated with your account. They will be used as env variables in the next section
-5. **Set up environment variables**  
-    Create a .env file in the project’s base directory and add the following environment variables:  
+
+5. **Set up environment variables**
+
+   Create a .env file in the project’s base directory and add the following environment variables:  
     (The SECRET_KEY can be anything you choose)
 
    ```js
@@ -228,7 +245,8 @@ To access the live version of this project and explore all of it's features, use
    > [!NOTE]
    > For the scope of this install tutorial, we will not cover setting up the facebook and google auth options. Use the local auth option for testing
 
-6. **Avoid accidental pushes to the original repository**  
+6. **Avoid accidental pushes to the original repository**
+
    If you plan to make changes, update the Git remote to point to your own fork to prevent accidental pushes to the base repository:
 
    ```sh
@@ -248,11 +266,14 @@ To access the live version of this project and explore all of it's features, use
    origin  https://github.com/<your_github_username>/pawprint-backend.git (push)
    ```
 
-7. **Start the Development Server**  
+7. **Start the Development Server**
+
    Run the following command to start the app:
+
    ```sh
    npm run serverstart
    ```
+
 8. **Start the frontend dev server and access it in browser on port 5173**
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
